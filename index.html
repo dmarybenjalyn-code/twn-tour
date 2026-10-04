@@ -87,6 +87,24 @@ select,input{width:100%;padding:12px;border:1.5px solid var(--rule);border-radiu
   border-top:1px solid var(--rule);padding-bottom:env(safe-area-inset-bottom,0px)}
 .nav button{padding:16px 4px;border:0;border-top:4px solid transparent;background:none;font:700 15px var(--body);color:var(--muted)}
 .nav button[aria-current="page"]{color:var(--ink);border-top-color:var(--bus)}
+
+.learn{margin-top:8px;padding:8px 14px;border:2px solid var(--bus);border-radius:999px;background:var(--card);font:700 15px var(--body)}
+.learn[aria-expanded="true"]{background:var(--bus);color:var(--bus-ink)}
+.panel{margin-top:12px;padding:14px;background:var(--card);border:1px solid var(--rule);border-left:5px solid var(--bus);border-radius:12px}
+.panel h4{margin:14px 0 4px;font:800 16px var(--head)}
+.panel h4:first-child{margin-top:0}
+.panel ul{margin:4px 0 0;padding-left:20px}
+.stop .panel p.q{margin:4px 0 8px;color:var(--ink);font-weight:600}
+.photobtn{display:inline-block;margin-top:10px;padding:9px 14px;border:2px solid var(--ink);border-radius:10px;font-weight:700;color:var(--ink);text-decoration:none}
+textarea{width:100%;min-height:120px;padding:12px;border:1.5px solid var(--rule);border-radius:10px;background:#fff;font:inherit;resize:vertical}
+.ghost{display:block;width:100%;margin-top:10px;padding:12px;border:2px solid var(--ink);border-radius:12px;background:none;font:700 16px var(--body)}
+.ans{padding:12px 0;border-bottom:1px solid var(--rule)}
+.ans h3{margin:0;font:700 17px var(--head)}
+.ans h3 small{margin-left:6px;font:400 14px var(--body);color:var(--muted)}
+.ans p{margin:4px 0 0;white-space:pre-wrap}
+.miss{margin:14px 0}
+.miss summary{cursor:pointer;font-weight:600}
+.qbox{margin:10px 0 4px;font-weight:600}
 @media (prefers-reduced-motion:no-preference){.big,.busbtn,.chip{transition:background-color .15s}}
 </style>
 </head>
@@ -137,9 +155,94 @@ const ROSTER = [];
   }});
 })();
 
+/* ============ GUIDE: facts, photos and a guide question for each stop ============
+   Each place needs: name, photo (what the "See photos" button searches for),
+   facts (3 short lines), question. A stop picks up its place automatically from
+   its title using PLACE_RULES below. If you rename a stop, check the rule still matches. */
+const GUIDE = {
+  "st-ignatius": { name:"St. Ignatius High School", photo:"St. Ignatius High School Taipei",
+    facts:["It is a Jesuit school. Jesuit missionaries founded it in Shanghai in 1850.",
+           "The school moved to Taipei in 1963.",
+           "Its Chinese name is 徐匯中學 (Xúhuì Zhōngxué)."],
+    question:"Every school has its own traditions. What is one way St. Ignatius is similar to your school, and one way it is different?" },
+  "pineapple-cake": { name:"DIY Pineapple Cake", photo:"Taiwan pineapple cake",
+    facts:["Pineapple cake (鳳梨酥, fènglí sū) is one of Taiwan's best-known pastries and a popular gift to take home.",
+           "In Taiwanese Hokkien, the word for pineapple sounds like a phrase meaning \"prosperity arrives\", so the cake is linked to good luck.",
+           "Some bakeries mix winter melon into the pineapple filling to balance the sour taste."],
+    question:"Describe, step by step, how you made your pineapple cake. Which step was the hardest, and what would you change next time?" },
+  "robot-wonderland": { name:"Sha Yang Ye Robot Museum", photo:"Sha Yang Ye Robot Wonderland Taoyuan",
+    facts:["Sha Yang Ye Robot Wonderland is in Taoyuan. It opened in 2013 at the headquarters of Sha Yang Ye Industrial Co.",
+           "The company is a leading maker of high-precision micro geared motors, a main part inside many robots.",
+           "Visitors can see more than 30 kinds of robots built for land, sea and air."],
+    question:"Choose one robot you saw. What job does it do, and how could a robot like it help people in your community?" },
+  "hsinchu": { name:"Hsinchu Science Park", photo:"Hsinchu Science Park Taiwan",
+    facts:["The park was set up in 1980 and was Taiwan's first science park.",
+           "It is a major center for semiconductors and electronics, and is often called Taiwan's Silicon Valley.",
+           "TSMC, one of the world's biggest chipmakers, has its headquarters in the park."],
+    question:"Why might many technology companies choose to work close together in one science park? Give one advantage and one possible problem." },
+  "cks-hall": { name:"Chiang Kai-shek Memorial Hall", photo:"Chiang Kai-shek Memorial Hall Taipei",
+    facts:["The hall honors Chiang Kai-shek, who died in 1975. It was completed in 1980.",
+           "The octagonal main building has white walls and a blue tile roof.",
+           "It stands at one end of Liberty Square, which is also home to the National Theater and National Concert Hall."],
+    question:"Look closely at the building and the square. Which details stood out to you (shapes, colors, symbols), and what message do you think the designers wanted to send?" },
+  "jinwen": { name:"Jinwen University", photo:"Jinwen University of Science and Technology Xindian",
+    facts:["Jinwen University of Science and Technology is a private university in Xindian District, New Taipei City.",
+           "It became a university of science and technology in 2007. Before that it was an institute of technology.",
+           "Its programs include hospitality and tourism, business, engineering and design."],
+    question:"Write one new thing you learned from the seminar, and one question you still have for the speaker." },
+  "taipei-101": { name:"Taipei 101", photo:"Taipei 101 building",
+    facts:["Taipei 101 is 508 meters tall and has 101 floors above ground.",
+           "When it was finished in 2004 it was the world's tallest building, a title it held until 2010.",
+           "A huge steel ball inside the tower, called a tuned mass damper, swings to reduce sway from typhoon winds and earthquakes."],
+    question:"How do you think engineers keep a very tall building safe from earthquakes and typhoons? Share your idea, then compare it with what you find out." },
+  "astronomical-museum": { name:"Taipei Astronomical Museum", photo:"Taipei Astronomical Museum Shilin",
+    facts:["The museum opened on 7 November 1996 in Shilin District.",
+           "Its planetarium sits under a golden dome about 35 meters across and is known as one of the largest in Asia.",
+           "The top floor has observatories and a radio telescope."],
+    question:"What is the most surprising thing you learned about space? Explain it in your own words, as if you were teaching a classmate." },
+  "ntsec": { name:"National Taiwan Science Education Center", photo:"National Taiwan Science Education Center Taipei",
+    facts:["The center was established in 1956 and moved to its current home in Shilin in 2003.",
+           "Its permanent exhibits cover life science, physics, chemistry, mathematics and earth science.",
+           "It also hosts national science fairs for elementary and high school students."],
+    question:"Choose one hands-on exhibit. What science idea does it show, and how would you explain it to a younger student?" },
+  "ximending": { name:"Ximending Shopping Area", photo:"Ximending Taipei",
+    facts:["Ximending is a pedestrian shopping district in Taipei, famous for youth fashion, street food and entertainment.",
+           "The area was developed in the early 1900s, during the Japanese colonial period. The Red House theater, opened in 1908, still stands there.",
+           "It is often compared to Tokyo's Shibuya and Harajuku districts."],
+    question:"Compare Ximending with a shopping area you know back home. What is one thing that is similar and one thing that is different?" },
+  "raohe": { name:"Raohe Night Market", photo:"Raohe Street Night Market Taipei",
+    facts:["Raohe Street Night Market is one of Taipei's oldest night markets and is about 600 meters long.",
+           "Its famous snack is the pepper bun (胡椒餅), baked against the wall of a barrel-shaped oven.",
+           "Ciyou Temple stands at the east end of the market."],
+    question:"Which food did you try? Describe its taste, smell and texture to someone who has never had it." },
+  "shifen-falls": { name:"Shifen Waterfalls", photo:"Shifen Waterfall Taiwan",
+    facts:["Shifen Waterfall is on the Keelung River in New Taipei City. The same river also flows through Taipei.",
+           "It is about 40 meters wide and 20 meters high.",
+           "It is nicknamed the Niagara Falls of Taiwan."],
+    question:"Describe the waterfall using at least three senses: what you saw, heard and felt. When do you think it looks most powerful, and why?" },
+  "pingxi": { name:"Pingxi Sky Lantern and Shifen Old Street", photo:"Pingxi sky lantern Shifen Old Street",
+    facts:["A popular local story says villagers first released sky lanterns to tell their families they were safe.",
+           "Today people write wishes on a lantern before sending it into the sky.",
+           "Shifen Old Street is built along a railway line, and trains pass right through the street."],
+    question:"What did your group of 3 to 4 choose to write on your lantern, and how did you decide together?" },
+  "bubble-tea": { name:"DIY Bubble Milk Tea", photo:"Taiwan bubble milk tea",
+    facts:["Bubble milk tea was invented in Taiwan in the 1980s. The chewy balls are made from tapioca.",
+           "Two Taiwanese cities, Taichung and Tainan, each claim to be where it began.",
+           "In Taiwan it is called pearl milk tea (珍珠奶茶, zhēnzhū nǎichá)."],
+    question:"List the steps you followed to make your drink. How would you explain bubble tea to someone back home who has never tried it?" }
+};
+const PLACE_RULES = [
+  [/Ignatius/i,"st-ignatius"], [/Pineapple/i,"pineapple-cake"], [/Sha Yang|Robot/i,"robot-wonderland"],
+  [/Hsinchu/i,"hsinchu"], [/Chiang|Memorial Hall/i,"cks-hall"], [/Jinwen/i,"jinwen"],
+  [/Taipei 101/i,"taipei-101"], [/Astronomical/i,"astronomical-museum"], [/Science Education/i,"ntsec"],
+  [/Ximending/i,"ximending"], [/Raohe/i,"raohe"], [/Shifen Waterfall/i,"shifen-falls"],
+  [/Pingxi/i,"pingxi"], [/Bubble/i,"bubble-tea"]
+];
+const placeFor = title => { const r = PLACE_RULES.find(x=>x[0].test(title)); return r ? r[1] : null; };
+
 /* ============ ITINERARY ============ */
 const ALL = [1,2,3,4];
-const s = (t,title,note="",o={}) => ({ t, title, note, buses:ALL, ...o });
+const s = (t,title,note="",o={}) => ({ t, title, note, buses:ALL, p:placeFor(title), ...o });
 const meal = (t,title) => s(t,title,"",{kind:"meal"});
 
 const DAYS = [
@@ -204,6 +307,9 @@ const DAYS = [
   ]}
 ];
 
+const PLACE_LIST = [];
+DAYS.forEach(d => d.stops.forEach(st => { if(st.p && !PLACE_LIST.some(x=>x.key===st.p)) PLACE_LIST.push({ key:st.p, day:d.n }); }));
+
 /* ============ HELPERS ============ */
 const $ = q => document.querySelector(q);
 const esc = v => String(v).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -228,6 +334,18 @@ function todayDay(){
 const remote = !!(CONFIG.supabaseUrl && CONFIG.supabaseKey);
 const API = CONFIG.supabaseUrl + "/rest/v1/checkins";
 const HDR = { apikey:CONFIG.supabaseKey, Authorization:"Bearer "+CONFIG.supabaseKey, "Content-Type":"application/json" };
+const ANS_API = CONFIG.supabaseUrl + "/rest/v1/answers";
+async function fetchAll(url){
+  const out = [];
+  for(let o=0;;o+=1000){
+    const r = await fetch(url + (url.includes("?")?"&":"?") + `limit=1000&offset=${o}`, {headers:HDR});
+    if(!r.ok) throw new Error("fetch failed");
+    const rows = await r.json();
+    out.push(...rows);
+    if(rows.length < 1000) break;
+  }
+  return out;
+}
 const db = {
   async list(day,bus,sid){
     if(remote){
@@ -250,6 +368,25 @@ const db = {
     const all = store.get("tour_checkins",[]).filter(x=>!(x.student_id===row.student_id && x.day===row.day && x.place===row.place));
     all.push(full); store.set("tour_checkins",all);
   },
+  async myAnswers(sid){
+    if(remote) return fetchAll(ANS_API + `?student_id=eq.${encodeURIComponent(sid)}&select=place,answer,updated_at&order=place`);
+    return store.get("tour_answers",[]).filter(x=>x.student_id===sid);
+  },
+  async setAnswer(row){
+    const full = { ...row, updated_at:new Date().toISOString() };
+    if(remote){
+      const r = await fetch(ANS_API+"?on_conflict=student_id,place",{
+        method:"POST", headers:{...HDR, Prefer:"resolution=merge-duplicates,return=minimal"}, body:JSON.stringify(full)});
+      if(!r.ok) throw new Error("save failed");
+      return;
+    }
+    const all = store.get("tour_answers",[]).filter(x=>!(x.student_id===row.student_id && x.place===row.place));
+    all.push(full); store.set("tour_answers",all);
+  },
+  async allAnswers(place){
+    if(remote) return fetchAll(ANS_API + "?select=student_id,bus,day,place,answer,updated_at&order=place,student_id" + (place?`&place=eq.${encodeURIComponent(place)}`:""));
+    return store.get("tour_answers",[]).filter(x=>!place || x.place===place);
+  },
   async remove(row){
     if(remote){
       const r = await fetch(API+`?student_id=eq.${encodeURIComponent(row.student_id)}&day=eq.${row.day}&place=eq.${row.place}`,{method:"DELETE",headers:HDR});
@@ -263,7 +400,7 @@ const db = {
 /* ============ STATE ============ */
 const state = {
   tab:"itinerary", bus:store.get("tour_bus",1), day:todayDay(), me:store.get("tour_me",null),
-  unlocked:false, tbus:1, tplace:"bus", missing:false
+  unlocked:false, tbus:1, tplace:"bus", missing:false, tmode:"checkins", tq:null, tbusF:0, open:null, mine:{}
 };
 let poll = null, teacherRows = [];
 
@@ -276,21 +413,59 @@ const dayTabs = () => `<div class="days" role="group" aria-label="Choose a day">
 
 const draftTag = on => (on && CONFIG.showDraftFlags) ? `<span class="tag">to confirm</span>` : "";
 
+function splitTime(t){
+  const parts = String(t).split(/\s*[-–]\s*/);
+  const parse = z => {
+    const m = (z||"").trim().match(/^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?$/i);
+    return m ? { h:+m[1], mi:m[2]||"00", ap:(m[3]||"").toUpperCase() } : null;
+  };
+  const a = parse(parts[0]), b = parts[1] ? parse(parts[1]) : null;
+  if(!a) return { start:String(t), mer:"", end:"" };
+  let ap = a.ap;
+  if(!ap && b && b.ap){
+    ap = b.ap;
+    if((a.h%12) > (b.h%12)) ap = (ap==="PM") ? "AM" : "PM";
+  }
+  const end = b ? `${b.h}:${b.mi} ${b.ap||ap}`.trim() : "";
+  return { start:`${a.h}:${a.mi}`, mer:ap, end };
+}
+
+function panelHTML(key){
+  const pl = GUIDE[key];
+  let draft = null;
+  try{ draft = localStorage.getItem("tour_draft_"+key); }catch(e){}
+  const val = draft !== null ? draft : (state.mine[key] || "");
+  const photoURL = "https://www.google.com/search?tbm=isch&q=" + encodeURIComponent(pl.photo);
+  return `<div class="panel"><h4>Quick facts</h4><ul>${pl.facts.map(f=>`<li>${esc(f)}</li>`).join("")}</ul>
+    <a class="photobtn" href="${photoURL}" target="_blank" rel="noopener">See photos of this place</a>
+    <h4>Guide question</h4><p class="q">${esc(pl.question)}</p>
+    ${state.me
+      ? `<label for="ans-${key}">Your answer</label>
+         <textarea id="ans-${key}" data-draft="${key}" rows="6" maxlength="2000" placeholder="Write your answer here">${esc(val)}</textarea>
+         <button class="primary" data-act="saveans" data-p="${key}">Save answer</button>
+         <p id="ans-status" class="muted" role="status"></p>`
+      : `<p class="muted">Pick your name in the <button class="link" data-tab="checkin">Check in</button> tab to write and save your answer.</p>`}
+  </div>`;
+}
+
+function stopHTML(x){
+  const tm = splitTime(x.t);
+  const pl = x.p ? GUIDE[x.p] : null;
+  const open = !!pl && state.open === x.p;
+  const done = !!pl && !!state.mine[x.p];
+  return `<li class="stop ${x.kind||""}"><time>${tm.start}<small>${tm.mer}</small>${tm.end?`<small>to ${tm.end}</small>`:""}</time><span class="mark"></span>
+    <div><h3>${esc(x.title)}${draftTag(x.check)}</h3>${x.note?`<p>${esc(x.note)}</p>`:""}
+    ${pl?`<button class="learn" data-act="openplace" data-p="${x.p}" aria-expanded="${open}">${done?"Answered. View or edit":"Learn and answer"}</button>`:""}
+    ${open?panelHTML(x.p):""}</div></li>`;
+}
+
 function viewItinerary(){
   const d = DAYS.find(x=>x.n===state.day);
   const stops = d.stops.filter(x=>x.buses.includes(state.bus));
   const link = CONFIG.photoLinks[d.n];
   return busPicker(state.bus,"bus") + dayTabs() +
     `<h2 class="dayhead">${fmtDate(d.date,{weekday:"long",month:"long",day:"numeric"})}${draftTag(d.assumedDate)}</h2>` +
-    `<ol class="line">${stops.map(x=>{
-      const parts = x.t.split(/\s*[-–]\s*/);
-      const ap = z => (z.match(/AM|PM/i)||[""])[0].toUpperCase();
-      const num = z => z.replace(/\s*(AM|PM)/i,"").trim();
-      const mer = ap(parts[0]) || ap(parts[1]||"");
-      const to = parts[1] ? `<small>to ${num(parts[1])} ${ap(parts[1])||mer}</small>` : "";
-      return `<li class="stop ${x.kind||""}"><time>${num(parts[0])}<small>${mer}</small>${to}</time><span class="mark"></span>
-      <div><h3>${esc(x.title)}${draftTag(x.check)}</h3>${x.note?`<p>${esc(x.note)}</p>`:""}</div></li>`;
-    }).join("")}</ol>` +
+    `<ol class="line">${stops.map(stopHTML).join("")}</ol>` +
     (link ? `<a class="photo" href="${esc(link)}" target="_blank" rel="noopener">Add your photos for Day ${d.n}</a>` : "");
 }
 
@@ -329,6 +504,31 @@ function viewInfo(){
 }
 
 function viewTeachers(){
+  if(!state.unlocked) return viewTeacherCheckins();
+  const bar = `<div class="seg" role="group" aria-label="Teacher view">
+    <button data-act="tmode" data-mode="checkins" aria-pressed="${state.tmode==="checkins"}">Check-ins</button>
+    <button data-act="tmode" data-mode="answers" aria-pressed="${state.tmode==="answers"}">Answers</button></div>`;
+  return bar + (state.tmode==="answers" ? viewAnswers() : viewTeacherCheckins());
+}
+
+function viewAnswers(){
+  if(!state.tq || !GUIDE[state.tq]) state.tq = PLACE_LIST[0].key;
+  const byDay = {};
+  PLACE_LIST.forEach(p => (byDay[p.day] = byDay[p.day] || []).push(p));
+  const opts = Object.keys(byDay).map(d => `<optgroup label="Day ${d}">${byDay[d].map(p =>
+    `<option value="${p.key}" ${p.key===state.tq?"selected":""}>${esc(GUIDE[p.key].name)}</option>`).join("")}</optgroup>`).join("");
+  return `<label for="tq">Question</label><select id="tq" data-change="tq">${opts}</select>
+    <p class="qbox">${esc(GUIDE[state.tq].question)}</p>
+    <label for="tbf">Show</label>
+    <select id="tbf" data-change="tbusf"><option value="0">All buses</option>${BUSES.map(b=>`<option value="${b.n}" ${state.tbusF===b.n?"selected":""}>Bus ${b.n}</option>`).join("")}</select>
+    <div class="sum"><div id="asum"></div></div>
+    <div id="alist"><p class="muted">Loading...</p></div>
+    <button class="primary" data-act="csv" data-scope="one">Download CSV for this question</button>
+    <button class="ghost" data-act="csv" data-scope="all">Download all answers (CSV)</button>
+    <p class="muted" style="font-size:15px">${remote?"":"Demo mode: answers stay on this phone."}</p>`;
+}
+
+function viewTeacherCheckins(){
   if(!state.unlocked){
     return `<section class="card"><h2>Teachers</h2><label for="pin">Enter PIN</label>
       <input id="pin" type="password" inputmode="numeric" autocomplete="off">
@@ -358,7 +558,7 @@ async function hydrateCheckin(){
 }
 
 async function hydrateTeacher(){
-  if(state.tab!=="teachers" || !state.unlocked) return;
+  if(state.tab!=="teachers" || !state.unlocked || state.tmode!=="checkins") return;
   const box = $("#tlist"); if(!box) return;
   try{ teacherRows = await db.list(state.day, state.tbus); }
   catch(e){ box.innerHTML = `<li class="err">Could not load check-ins. Check the connection.</li>`; return; }
@@ -374,6 +574,55 @@ async function hydrateTeacher(){
   clearInterval(poll); poll = setInterval(hydrateTeacher, 15000);
 }
 
+async function hydrateAnswers(){
+  if(state.tab!=="teachers" || !state.unlocked || state.tmode!=="answers") return;
+  const box = $("#alist"); if(!box) return;
+  let rows;
+  try{ rows = await db.allAnswers(state.tq); }
+  catch(e){ box.innerHTML = `<p class="err">Could not load answers. Check the connection.</p>`; return; }
+  const roster = ROSTER.filter(r=>!state.tbusF || r.bus===state.tbusF);
+  const map = new Map(rows.map(r=>[r.student_id,r]));
+  const done = roster.filter(r=>map.has(r.id)), missing = roster.filter(r=>!map.has(r.id));
+  $("#asum").innerHTML = `<b>${done.length}</b> of ${roster.length} answered`;
+  box.innerHTML = done.map(r=>{
+    const a = map.get(r.id);
+    return `<article class="ans"><h3>${esc(r.name)}<small>Bus ${r.bus}, ${fmtTime(a.updated_at)}</small></h3><p>${esc(a.answer)}</p></article>`;
+  }).join("") + (missing.length
+    ? `<details class="miss"><summary>Not answered yet (${missing.length})</summary><p>${missing.map(r=>esc(r.name)).join(", ")}</p></details>` : "");
+}
+
+async function loadMine(){
+  if(!state.me) return;
+  try{
+    const rows = await db.myAnswers(state.me.id);
+    state.mine = {};
+    rows.forEach(r => { state.mine[r.place] = r.answer; });
+    if(state.tab==="itinerary") render();
+  }catch(e){}
+}
+
+function csvCell(v){
+  let s = String(v==null?"":v);
+  if(/^[=+\-@\t\r]/.test(s)) s = "'" + s;   // stops spreadsheets from running answers as formulas
+  return '"' + s.replace(/"/g,'""') + '"';
+}
+async function downloadCSV(place){
+  const rows = await db.allAnswers(place);
+  const names = new Map(ROSTER.map(r=>[r.id,r.name]));
+  const head = ["student_id","student_name","bus","day","place","question","answer","saved_at"];
+  const lines = [head.map(csvCell).join(",")];
+  rows.forEach(r => {
+    const pl = GUIDE[r.place] || { name:r.place, question:"" };
+    lines.push([r.student_id, names.get(r.student_id)||"", r.bus, r.day, pl.name, pl.question, r.answer, r.updated_at].map(csvCell).join(","));
+  });
+  const blob = new Blob(["\uFEFF" + lines.join("\r\n")], { type:"text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "tour-answers" + (place?"-"+place:"") + ".csv";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 2000);
+}
+
 /* ============ RENDER + EVENTS ============ */
 function render(){
   clearInterval(poll);
@@ -384,7 +633,7 @@ function render(){
   $("#app").innerHTML = views[state.tab]();
   document.querySelectorAll(".nav button").forEach(n=>n.setAttribute("aria-current", n.dataset.tab===state.tab?"page":"false"));
   if(state.tab==="checkin") hydrateCheckin();
-  if(state.tab==="teachers") hydrateTeacher();
+  if(state.tab==="teachers") (state.tmode==="answers" ? hydrateAnswers() : hydrateTeacher());
 }
 
 document.addEventListener("click", async e=>{
@@ -399,9 +648,9 @@ document.addEventListener("click", async e=>{
   else if(a==="pickme"){
     const id = $("#who").value, me = ROSTER.find(r=>r.id===id);
     if(!me){ $("#whoerr").textContent = "Choose your name from the list."; return; }
-    state.me = me; state.bus = me.bus; store.set("tour_me",me); store.set("tour_bus",me.bus); render();
+    state.me = me; state.bus = me.bus; state.mine = {}; store.set("tour_me",me); store.set("tour_bus",me.bus); render(); loadMine();
   }
-  else if(a==="switchme"){ state.me=null; store.set("tour_me",null); render(); }
+  else if(a==="switchme"){ state.me=null; state.mine={}; store.set("tour_me",null); render(); }
   else if(a==="unlock"){
     if($("#pin").value===CONFIG.teacherPin){ state.unlocked=true; render(); }
     else $("#pinerr").textContent = "That PIN is not correct.";
@@ -413,6 +662,30 @@ document.addEventListener("click", async e=>{
     catch(err){ alert("Could not save. Check your connection and try again."); }
     hydrateCheckin();
   }
+  else if(a==="openplace"){ state.open = (state.open===el.dataset.p) ? null : el.dataset.p; render(); }
+  else if(a==="saveans"){
+    const key = el.dataset.p, ta = $("#ans-"+key), st = $("#ans-status");
+    const text = ta.value.trim();
+    if(!state.me) return;
+    if(!text){ st.textContent = "Write an answer first."; return; }
+    st.textContent = "Saving...";
+    const day = (PLACE_LIST.find(x=>x.key===key)||{}).day || state.day;
+    try{
+      await db.setAnswer({ student_id:state.me.id, bus:state.me.bus, day, place:key, answer:text });
+      state.mine[key] = text;
+      try{ localStorage.removeItem("tour_draft_"+key); }catch(e){}
+      st.textContent = "Saved at " + fmtTime(new Date().toISOString()) + ".";
+      const btn = document.querySelector(`.learn[data-p="${key}"]`);
+      if(btn) btn.textContent = "Answered. View or edit";
+    }catch(err){
+      st.textContent = "Could not save. Your answer is kept on this phone. Try again when you have signal.";
+    }
+  }
+  else if(a==="tmode"){ state.tmode = el.dataset.mode; render(); }
+  else if(a==="csv"){
+    try{ await downloadCSV(el.dataset.scope==="one" ? state.tq : null); }
+    catch(err){ alert("Could not create the file. Check the connection and try again."); }
+  }
   else if(a==="tmark"){
     const id = el.dataset.id;
     const has = teacherRows.some(r=>r.student_id===id && r.place===state.tplace);
@@ -423,11 +696,24 @@ document.addEventListener("click", async e=>{
   }
 });
 
+document.addEventListener("change", e=>{
+  const el = e.target.closest("[data-change]"); if(!el) return;
+  if(el.dataset.change==="tq"){ state.tq = el.value; render(); }
+  else if(el.dataset.change==="tbusf"){ state.tbusF = +el.value; render(); }
+});
+document.addEventListener("input", e=>{
+  const el = e.target;
+  if(el.matches && el.matches("textarea[data-draft]")){
+    try{ localStorage.setItem("tour_draft_"+el.dataset.draft, el.value); }catch(err){}
+  }
+});
+
 (function(){
   const a = fmtDate(DAYS[0].date,{month:"short",day:"numeric"});
   const z = fmtDate(DAYS[DAYS.length-1].date,{month:"short",day:"numeric",year:"numeric"});
   $("#range").textContent = a + " to " + z;
   render();
+  loadMine();
 })();
 </script>
 </body>
