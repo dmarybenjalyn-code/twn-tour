@@ -114,7 +114,7 @@ const CONFIG = {
   // Add teacher contacts, e.g. { name: "Ms. Reyes", phone: "+63 900 000 0000" }
   contacts: [],
   // Marks parts of the itinerary that still need confirming. Set to false before sharing with students.
-  showDraftFlags: true
+  showDraftFlags: false
 };
 
 /* ============ BUSES ============ */
@@ -153,8 +153,8 @@ const DAYS = [
   { n:2, date:"2026-10-15", assumedDate:true, stops:[
     s("7:30 AM","Pick up at the hotel","Hilton Hotel Sinban",{check:true}),
     s("8:00 - 9:30 AM","St. Ignatius High School visit (Batch 1)","",{buses:[1,2],check:true}),
-     s("10:00 - 11:30 AM","St. Ignatius High School visit (Batch 2)","",{buses:[3,4],check:true}),
     s("8:00 - 9:00 AM","DIY Pineapple Cake","",{buses:[3,4],check:true}),
+    s("10:00 - 11:30 AM","St. Ignatius High School visit (Batch 2)","",{buses:[3,4],check:true}),
     s("10:30 - 11:30 AM","Sha Yang Ye Robot Museum","",{buses:[1,2],check:true}),
     meal("12:00 - 1:00 PM","Lunch"),
     s("2:00 - 3:00 PM","Hsinchu Science Park","",{buses:[1],check:true}),
@@ -283,9 +283,13 @@ function viewItinerary(){
   return busPicker(state.bus,"bus") + dayTabs() +
     `<h2 class="dayhead">${fmtDate(d.date,{weekday:"long",month:"long",day:"numeric"})}${draftTag(d.assumedDate)}</h2>` +
     `<ol class="line">${stops.map(x=>{
-      const [time,mer] = x.t.split(" ");
-      return `<li class="stop ${x.kind||""}"><time>${time}<small>${mer}</small></time><span class="mark"></span>
-        <div><h3>${esc(x.title)}${draftTag(x.check)}</h3>${x.note?`<p>${esc(x.note)}</p>`:""}</div></li>`;
+      const parts = x.t.split(/\s*[-–]\s*/);
+      const ap = z => (z.match(/AM|PM/i)||[""])[0].toUpperCase();
+      const num = z => z.replace(/\s*(AM|PM)/i,"").trim();
+      const mer = ap(parts[0]) || ap(parts[1]||"");
+      const to = parts[1] ? `<small>to ${num(parts[1])} ${ap(parts[1])||mer}</small>` : "";
+      return `<li class="stop ${x.kind||""}"><time>${num(parts[0])}<small>${mer}</small>${to}</time><span class="mark"></span>
+      <div><h3>${esc(x.title)}${draftTag(x.check)}</h3>${x.note?`<p>${esc(x.note)}</p>`:""}</div></li>`;
     }).join("")}</ol>` +
     (link ? `<a class="photo" href="${esc(link)}" target="_blank" rel="noopener">Add your photos for Day ${d.n}</a>` : "");
 }
