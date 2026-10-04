@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Taiwan Educational Tour</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F2F4F1; --card:#FFFFFF; --ink:#13202E; --muted:#5A6672; --rule:#D3D9D5;
+  --bus:#C8283A; --bus-ink:#FFFFFF; --warn:#9A5B00;
+  --head:"Archivo","Arial Narrow",Arial,sans-serif;
+  --body:"Source Sans 3","Segoe UI",Arial,sans-serif;
+  box-sizing:border-box;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.45 var(--body);
+  padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+
+.top{background:var(--bus);color:var(--bus-ink);padding:calc(18px + env(safe-area-inset-top,0px)) 20px 18px}
+.top h1{margin:0;font:800 30px/1.05 var(--head);font-stretch:100%;letter-spacing:-.01em}
+.top p{margin:6px 0 0;font-size:16px;opacity:.92}
+.wrap{max-width:640px;margin:0 auto;padding:0 16px}
+
+.buses{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:16px 0 4px}
+.busbtn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px;border:2px solid var(--c);
+  background:var(--card);border-radius:14px;font:600 14px var(--body)}
+.busbtn .badge{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--c);color:var(--ci);font:800 20px var(--head)}
+.busbtn[aria-pressed="true"]{background:var(--c);color:var(--ci)}
+.busbtn[aria-pressed="true"] .badge{background:var(--ci);color:var(--c)}
+
+.days{display:flex;gap:8px;overflow-x:auto;padding:12px 0 6px;scrollbar-width:none}
+.days::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;padding:8px 14px;border:1.5px solid var(--rule);background:var(--card);border-radius:999px;font:600 15px var(--body);white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+
+.dayhead{margin:18px 0 14px;font:800 24px/1.15 var(--head);letter-spacing:-.005em}
+.tag{display:inline-block;margin-left:8px;padding:1px 8px;border-radius:6px;background:#FFF1D6;color:var(--warn);font:600 13px var(--body);vertical-align:middle}
+
+.line{list-style:none;margin:0;padding:0}
+.stop{position:relative;display:grid;grid-template-columns:70px 22px 1fr;column-gap:12px;padding-bottom:22px}
+.stop::before{content:"";position:absolute;left:93px;top:8px;bottom:-8px;width:4px;background:var(--bus)}
+.stop:last-child::before{bottom:auto;height:10px}
+.stop time{font:800 19px/1.1 var(--head);text-align:right;padding-top:2px}
+.stop time small{display:block;font:600 12px var(--body);color:var(--muted);margin-top:1px}
+.mark{position:relative;z-index:1;width:22px;height:22px;border-radius:50%;border:5px solid var(--bus);background:var(--paper);margin-top:1px}
+.meal .mark{width:12px;height:12px;border:0;background:var(--bus);margin:6px 5px}
+.stop h3{margin:0;font:700 18px/1.25 var(--head);font-stretch:95%}
+.stop p{margin:3px 0 0;color:var(--muted);font-size:16px}
+
+.card{background:var(--card);border:1px solid var(--rule);border-radius:16px;padding:18px;margin:16px 0}
+.card h2{margin:0 0 6px;font:800 21px var(--head)}
+.muted{color:var(--muted)}
+.err{color:#A3202E;font-weight:600}
+label{display:block;font-weight:600;margin:10px 0 6px}
+select,input{width:100%;padding:12px;border:1.5px solid var(--rule);border-radius:10px;background:#fff;font:inherit}
+.primary{display:block;width:100%;margin-top:14px;padding:14px;border:0;border-radius:12px;background:var(--bus);color:var(--bus-ink);font:700 17px var(--body)}
+.link{border:0;background:none;padding:0;color:var(--ink);text-decoration:underline;font-size:15px}
+.photo{display:block;margin:6px 0 18px;padding:14px;border-radius:12px;border:2px solid var(--ink);text-align:center;font-weight:700;color:var(--ink);text-decoration:none}
+
+.big{display:flex;justify-content:space-between;align-items:center;width:100%;min-height:76px;margin-top:12px;padding:14px 18px;
+  border:2px solid var(--bus);border-radius:16px;background:var(--card);text-align:left;font:800 21px var(--head)}
+.big small{display:block;font:400 15px var(--body);color:var(--muted);margin-top:2px}
+.big.done{background:var(--bus);color:var(--bus-ink)}
+.big.done small{color:inherit;opacity:.9}
+.big .tick{font-size:28px}
+
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:12px 0}
+.seg button{padding:10px;border:1.5px solid var(--rule);border-radius:10px;background:var(--card);font-weight:600}
+.seg button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.sum{display:flex;justify-content:space-between;align-items:baseline;margin:10px 0}
+.sum b{font:800 34px var(--head)}
+.roster{list-style:none;margin:0;padding:0}
+.roster button{display:flex;justify-content:space-between;width:100%;padding:13px 4px;border:0;border-bottom:1px solid var(--rule);background:none;text-align:left}
+.roster .ok{color:var(--bus);font-weight:700}
+.roster .no{color:var(--muted)}
+
+.info h3{margin:18px 0 4px;font:700 18px var(--head)}
+.info ul{margin:4px 0;padding-left:20px}
+
+.nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(4,1fr);background:var(--card);
+  border-top:1px solid var(--rule);padding-bottom:env(safe-area-inset-bottom,0px)}
+.nav button{padding:16px 4px;border:0;border-top:4px solid transparent;background:none;font:700 15px var(--body);color:var(--muted)}
+.nav button[aria-current="page"]{color:var(--ink);border-top-color:var(--bus)}
+@media (prefers-reduced-motion:no-preference){.big,.busbtn,.chip{transition:background-color .15s}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap" style="padding:0"><h1>Taiwan Educational Tour</h1><p id="range"></p></div></header>
+<main class="wrap" id="app"></main>
+<nav class="nav" aria-label="Sections">
+  <button data-tab="itinerary">Itinerary</button>
+  <button data-tab="checkin">Check in</button>
+  <button data-tab="info">Info</button>
+  <button data-tab="teachers">Teachers</button>
+</nav>
+
+<script>
+/* ============ SETTINGS (edit these) ============ */
+const CONFIG = {
+  // Leave both blank to run in demo mode (check-ins are saved only on that one phone).
+  // Fill them in from Supabase (Project Settings > API) to share check-ins between phones.
+  supabaseUrl: "",
+  supabaseKey: "",
+  // Only hides the teacher screen. It is not real security (see notes).
+  teacherPin: "2026",
+  // Paste a Padlet (or other) link for each day. Blank = hidden.
+  photoLinks: { 1:"", 2:"", 3:"", 4:"", 5:"", 6:"" },
+  // Add teacher contacts, e.g. { name: "Ms. Reyes", phone: "+63 900 000 0000" }
+  contacts: [],
+  // Marks parts of the itinerary that still need confirming. Set to false before sharing with students.
+  showDraftFlags: true
+};
+
+/* ============ BUSES ============ */
+const BUSES = [
+  { n:1, color:"#C8283A", ink:"#FFFFFF" },
+  { n:2, color:"#1F62B5", ink:"#FFFFFF" },
+  { n:3, color:"#1E7F4F", ink:"#FFFFFF" },
+  { n:4, color:"#F0A202", ink:"#13202E" }
+];
+
+/* ============ ROSTER ============
+   Placeholder names. Replace with the real 118 students:
+   { id:"S001", name:"Juan Dela Cruz", bus:1 }, ...  (id must be unique and never change) */
+const ROSTER = [];
+(function(){
+  const split = [30,30,29,29]; let k = 1;
+  split.forEach((count,i)=>{ for(let j=0;j<count;j++){
+    const p = String(k).padStart(3,"0");
+    ROSTER.push({ id:"S"+p, name:"Student "+p, bus:i+1 }); k++;
+  }});
+})();
+
+/* ============ ITINERARY ============ */
+const ALL = [1,2,3,4];
+const s = (t,title,note="",o={}) => ({ t, title, note, buses:ALL, ...o });
+const meal = (t,title) => s(t,title,"",{kind:"meal"});
+
+const DAYS = [
+  { n:1, date:"2026-10-14", assumedDate:true, stops:[
+    s("11:00 AM","Meet up at Iloilo International Airport","Packed lunch at the airport"),
+    s("1:25 PM","Flight Iloilo to Manila","PR 2144, 1h 15m"),
+    s("2:40 PM","Arrival at NAIA","Terminal transfer"),
+    s("6:25 PM","Flight Manila to Taipei","PR 894, 2h 25m"),
+    s("8:50 PM","Arrival at Taoyuan International Airport","Transfer to Hilton Hotel Sinban and check in")
+  ]},
+  { n:2, date:"2026-10-15", assumedDate:true, stops:[
+    s("7:30 AM","Pick up at the hotel","Hilton Hotel Sinban",{check:true}),
+    s("8:00 AM","St. Ignatius High School visit (Batch 1)","",{buses:[1,2],check:true}),
+    s("8:30 AM","DIY Pineapple Cake","",{buses:[3,4],check:true}),
+    s("11:00 AM","Sha Yang Te Robot Museum","",{buses:[1,2],check:true}),
+    meal("12:30 PM","Lunch"),
+    s("2:30 PM","Hsinchu Science Park","",{buses:[1],check:true}),
+    s("2:30 PM","DIY Pineapple Cake","",{buses:[2],check:true}),
+    s("2:30 PM","Sha Yang Te Robot Museum","",{buses:[3,4],check:true}),
+    s("4:30 PM","DIY Pineapple Cake","",{buses:[1],check:true}),
+    s("4:30 PM","Hsinchu Science Park","",{buses:[2],check:true}),
+    s("4:30 PM","Chiang Kai-shek Memorial Hall","",{buses:[3,4],check:true}),
+    meal("6:00 PM","Dinner"),
+    s("7:00 PM","Check in at ALOFT Hotel")
+  ]},
+  { n:3, date:"2026-10-16", stops:[
+    s("8:00 AM","Pick up at the hotel"),
+    s("9:00 AM","Jinwen University","Includes a seminar at the university"),
+    meal("12:00 PM","Lunch at Jinwen"),
+    s("1:00 PM","Taipei 101 Mall","Observatory ticket is not included",{buses:[1,2,4],check:true}),
+    s("1:00 PM","Hsinchu Science Park","",{buses:[3],check:true}),
+    s("3:00 PM","Chiang Kai-shek Memorial Hall","",{buses:[1,2],check:true}),
+    s("3:00 PM","Taipei 101 Mall","Observatory ticket is not included",{buses:[3],check:true}),
+    s("3:00 PM","Hsinchu Science Park","",{buses:[4],check:true}),
+    meal("5:30 PM","Dinner"),
+    s("6:00 PM","Back to the hotel")
+  ]},
+  { n:4, date:"2026-10-17", stops:[
+    s("9:00 AM","Pick up at the hotel"),
+    s("9:30 AM","Taipei Astronomical Museum"),
+    s("11:30 AM","National Taiwan Science Education Center"),
+    meal("1:00 PM","Lunch"),
+    s("2:30 PM","Ximending Shopping Area","Dinner is included in this stop",{check:true}),
+    s("6:00 PM","Raohe Night Market"),
+    s("7:00 PM","Back to the hotel")
+  ]},
+  { n:5, date:"2026-10-18", stops:[
+    s("9:00 AM","Pick up at the hotel"),
+    s("10:00 AM","Shifen Waterfalls"),
+    s("11:00 AM","Pingxi Sky Lantern and Shifen Old Street","3 to 4 people per lantern"),
+    meal("12:30 PM","Lunch"),
+    s("3:00 PM","DIY Bubble Milk Tea"),
+    meal("5:00 PM","Dinner"),
+    s("6:00 PM","Arrive at Taoyuan International Airport"),
+    s("9:50 PM","Flight Taipei to Manila","PR 895, 2h 15m")
+  ]},
+  { n:6, date:"2026-10-19", stops:[
+    s("12:05 AM","Arrival at NAIA"),
+    s("4:05 AM","Flight Manila to Iloilo","PR 2139, 1h 20m"),
+    s("5:25 AM","Arrival at Iloilo International Airport")
+  ]}
+];
+
+/* ============ HELPERS ============ */
+const $ = q => document.querySelector(q);
+const esc = v => String(v).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const store = {
+  get(k,d){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch(e){ return d; } },
+  set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+};
+const fmtDate = (iso,o) => new Date(iso+"T00:00:00").toLocaleDateString("en-US",o);
+const fmtTime = iso => new Date(iso).toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
+const PLACES = { bus:{ ask:"I'm on the bus", done:"On the bus", short:"on the bus" },
+                 hotel:{ ask:"I'm at the hotel", done:"At the hotel", short:"at the hotel" } };
+
+function todayDay(){
+  const t=new Date();
+  const iso=t.getFullYear()+"-"+String(t.getMonth()+1).padStart(2,"0")+"-"+String(t.getDate()).padStart(2,"0");
+  const hit=DAYS.find(d=>d.date===iso);
+  if(hit) return hit.n;
+  return iso<DAYS[0].date ? 1 : DAYS[DAYS.length-1].n;
+}
+
+/* ============ DATA LAYER (demo storage or Supabase) ============ */
+const remote = !!(CONFIG.supabaseUrl && CONFIG.supabaseKey);
+const API = CONFIG.supabaseUrl + "/rest/v1/checkins";
+const HDR = { apikey:CONFIG.supabaseKey, Authorization:"Bearer "+CONFIG.supabaseKey, "Content-Type":"application/json" };
+const db = {
+  async list(day,bus,sid){
+    if(remote){
+      let q = `?day=eq.${day}&bus=eq.${bus}&select=student_id,place,created_at`;
+      if(sid) q += `&student_id=eq.${encodeURIComponent(sid)}`;
+      const r = await fetch(API+q,{headers:HDR});
+      if(!r.ok) throw new Error("list failed");
+      return r.json();
+    }
+    return store.get("tour_checkins",[]).filter(x=>x.day===day && x.bus===bus && (!sid || x.student_id===sid));
+  },
+  async set(row){
+    const full = { ...row, created_at:new Date().toISOString() };
+    if(remote){
+      const r = await fetch(API+"?on_conflict=student_id,day,place",{
+        method:"POST", headers:{...HDR, Prefer:"resolution=merge-duplicates,return=minimal"}, body:JSON.stringify(full)});
+      if(!r.ok) throw new Error("save failed");
+      return;
+    }
+    const all = store.get("tour_checkins",[]).filter(x=>!(x.student_id===row.student_id && x.day===row.day && x.place===row.place));
+    all.push(full); store.set("tour_checkins",all);
+  },
+  async remove(row){
+    if(remote){
+      const r = await fetch(API+`?student_id=eq.${encodeURIComponent(row.student_id)}&day=eq.${row.day}&place=eq.${row.place}`,{method:"DELETE",headers:HDR});
+      if(!r.ok) throw new Error("delete failed");
+      return;
+    }
+    store.set("tour_checkins", store.get("tour_checkins",[]).filter(x=>!(x.student_id===row.student_id && x.day===row.day && x.place===row.place)));
+  }
+};
+
+/* ============ STATE ============ */
+const state = {
+  tab:"itinerary", bus:store.get("tour_bus",1), day:todayDay(), me:store.get("tour_me",null),
+  unlocked:false, tbus:1, tplace:"bus", missing:false
+};
+let poll = null, teacherRows = [];
+
+/* ============ VIEWS ============ */
+const busPicker = (sel,act) => `<div class="buses" role="group" aria-label="Choose a bus">${BUSES.map(b=>
+  `<button class="busbtn" data-act="${act}" data-bus="${b.n}" aria-pressed="${b.n===sel}" style="--c:${b.color};--ci:${b.ink}"><span class="badge">${b.n}</span>Bus ${b.n}</button>`).join("")}</div>`;
+
+const dayTabs = () => `<div class="days" role="group" aria-label="Choose a day">${DAYS.map(d=>
+  `<button class="chip" data-act="day" data-day="${d.n}" aria-pressed="${d.n===state.day}">Day ${d.n}, ${fmtDate(d.date,{weekday:"short",day:"numeric"})}</button>`).join("")}</div>`;
+
+const draftTag = on => (on && CONFIG.showDraftFlags) ? `<span class="tag">to confirm</span>` : "";
+
+function viewItinerary(){
+  const d = DAYS.find(x=>x.n===state.day);
+  const stops = d.stops.filter(x=>x.buses.includes(state.bus));
+  const link = CONFIG.photoLinks[d.n];
+  return busPicker(state.bus,"bus") + dayTabs() +
+    `<h2 class="dayhead">${fmtDate(d.date,{weekday:"long",month:"long",day:"numeric"})}${draftTag(d.assumedDate)}</h2>` +
+    `<ol class="line">${stops.map(x=>{
+      const [time,mer] = x.t.split(" ");
+      return `<li class="stop ${x.kind||""}"><time>${time}<small>${mer}</small></time><span class="mark"></span>
+        <div><h3>${esc(x.title)}${draftTag(x.check)}</h3>${x.note?`<p>${esc(x.note)}</p>`:""}</div></li>`;
+    }).join("")}</ol>` +
+    (link ? `<a class="photo" href="${esc(link)}" target="_blank" rel="noopener">Add your photos for Day ${d.n}</a>` : "");
+}
+
+function viewCheckin(){
+  if(!state.me){
+    return `<section class="card"><h2>Who are you?</h2><p class="muted">Pick your name once. This phone will remember it.</p>
+      <label for="who">Your name</label>
+      <select id="who"><option value="">Choose your name</option>${BUSES.map(b=>
+        `<optgroup label="Bus ${b.n}">${ROSTER.filter(r=>r.bus===b.n).map(r=>`<option value="${r.id}">${esc(r.name)}</option>`).join("")}</optgroup>`).join("")}</select>
+      <p id="whoerr" class="err" role="alert"></p>
+      <button class="primary" data-act="pickme">Continue</button></section>`;
+  }
+  const d = DAYS.find(x=>x.n===state.day);
+  return dayTabs() + `<section class="card"><h2>${esc(state.me.name)}</h2>
+    <p class="muted" style="margin:0">Bus ${state.me.bus}. <button class="link" data-act="switchme">Not you?</button></p></section>
+    <h2 class="dayhead">Day ${d.n}, ${fmtDate(d.date,{weekday:"long",month:"long",day:"numeric"})}</h2>
+    <div id="ci" aria-live="polite"><p class="muted">Loading...</p></div>`;
+}
+
+function viewInfo(){
+  const flights = [
+    ["PR 2144","Iloilo to Manila","Day 1, 1:25 PM"],
+    ["PR 894","Manila to Taipei","Day 1, 6:25 PM"],
+    ["PR 895","Taipei to Manila","Day 5, 9:50 PM"],
+    ["PR 2139","Manila to Iloilo","Day 6, 4:05 AM"]
+  ];
+  return `<div class="info"><h2 class="dayhead">Trip info</h2>
+    <h3>Hotels</h3><ul><li>Hilton Hotel Sinban: night of Day 1</li><li>ALOFT Hotel: from the night of Day 2</li></ul>
+    <h3>Flights</h3><ul>${flights.map(f=>`<li><b>${f[0]}</b> ${f[1]}, ${f[2]}</li>`).join("")}</ul>
+    <h3>Teacher contacts</h3>${CONFIG.contacts.length
+      ? `<ul>${CONFIG.contacts.map(c=>`<li>${esc(c.name)}: <a href="tel:${esc(c.phone.replace(/\s/g,""))}">${esc(c.phone)}</a></li>`).join("")}</ul>`
+      : `<p class="muted">Your teachers will add contact numbers here.</p>`}
+    <h3>Photo boards</h3>${Object.values(CONFIG.photoLinks).some(Boolean)
+      ? `<ul>${DAYS.filter(d=>CONFIG.photoLinks[d.n]).map(d=>`<li><a href="${esc(CONFIG.photoLinks[d.n])}" target="_blank" rel="noopener">Day ${d.n} photos</a></li>`).join("")}</ul>`
+      : `<p class="muted">Photo board links will be posted here.</p>`}</div>`;
+}
+
+function viewTeachers(){
+  if(!state.unlocked){
+    return `<section class="card"><h2>Teachers</h2><label for="pin">Enter PIN</label>
+      <input id="pin" type="password" inputmode="numeric" autocomplete="off">
+      <p id="pinerr" class="err" role="alert"></p><button class="primary" data-act="unlock">Open</button></section>`;
+  }
+  return busPicker(state.tbus,"tbus") + dayTabs() +
+    `<div class="seg" role="group" aria-label="Check-in type">
+       <button data-act="tplace" data-place="bus" aria-pressed="${state.tplace==="bus"}">On the bus</button>
+       <button data-act="tplace" data-place="hotel" aria-pressed="${state.tplace==="hotel"}">At the hotel</button></div>
+     <div class="sum"><div id="tsum"></div><button class="link" data-act="missing">${state.missing?"Show everyone":"Show only missing"}</button></div>
+     <ul class="roster" id="tlist"><li class="muted">Loading...</li></ul>
+     <p class="muted" style="font-size:15px">Tap a name to mark or unmark that student. ${remote?"":"Demo mode: data stays on this phone."}</p>`;
+}
+
+/* ============ ASYNC PARTS ============ */
+async function hydrateCheckin(){
+  const box = $("#ci"); if(!box || !state.me) return;
+  let rows;
+  try{ rows = await db.list(state.day, state.me.bus, state.me.id); }
+  catch(e){ box.innerHTML = `<p class="err">Could not load. Check your connection and try again.</p>`; return; }
+  box.innerHTML = Object.keys(PLACES).map(p=>{
+    const r = rows.find(x=>x.place===p);
+    return `<button class="big ${r?"done":""}" data-act="toggleci" data-place="${p}">
+      <span>${r?PLACES[p].done:PLACES[p].ask}<small>${r?"Checked in at "+fmtTime(r.created_at)+". Tap to undo.":"Tap to check in"}</small></span>
+      <span class="tick" aria-hidden="true">${r?"&#10003;":""}</span></button>`;
+  }).join("");
+}
+
+async function hydrateTeacher(){
+  if(state.tab!=="teachers" || !state.unlocked) return;
+  const box = $("#tlist"); if(!box) return;
+  try{ teacherRows = await db.list(state.day, state.tbus); }
+  catch(e){ box.innerHTML = `<li class="err">Could not load check-ins. Check the connection.</li>`; return; }
+  const roster = ROSTER.filter(r=>r.bus===state.tbus);
+  const map = new Map(teacherRows.filter(r=>r.place===state.tplace).map(r=>[r.student_id,r]));
+  $("#tsum").innerHTML = `<b>${map.size}</b> of ${roster.length} ${PLACES[state.tplace].short}`;
+  const list = roster.filter(r=>!state.missing || !map.has(r.id));
+  box.innerHTML = list.length ? list.map(r=>{
+    const c = map.get(r.id);
+    return `<li><button data-act="tmark" data-id="${r.id}"><span>${esc(r.name)}</span>
+      <span class="${c?"ok":"no"}">${c?fmtTime(c.created_at):"Not yet"}</span></button></li>`;
+  }).join("") : `<li class="muted" style="padding:12px 0">Everyone is accounted for.</li>`;
+  clearInterval(poll); poll = setInterval(hydrateTeacher, 15000);
+}
+
+/* ============ RENDER + EVENTS ============ */
+function render(){
+  clearInterval(poll);
+  const b = BUSES[state.bus-1];
+  document.documentElement.style.setProperty("--bus", b.color);
+  document.documentElement.style.setProperty("--bus-ink", b.ink);
+  const views = { itinerary:viewItinerary, checkin:viewCheckin, info:viewInfo, teachers:viewTeachers };
+  $("#app").innerHTML = views[state.tab]();
+  document.querySelectorAll(".nav button").forEach(n=>n.setAttribute("aria-current", n.dataset.tab===state.tab?"page":"false"));
+  if(state.tab==="checkin") hydrateCheckin();
+  if(state.tab==="teachers") hydrateTeacher();
+}
+
+document.addEventListener("click", async e=>{
+  const el = e.target.closest("[data-act],[data-tab]"); if(!el) return;
+  if(el.dataset.tab){ state.tab = el.dataset.tab; render(); window.scrollTo(0,0); return; }
+  const a = el.dataset.act;
+  if(a==="bus"){ state.bus=+el.dataset.bus; store.set("tour_bus",state.bus); render(); }
+  else if(a==="tbus"){ state.tbus=+el.dataset.bus; render(); }
+  else if(a==="day"){ state.day=+el.dataset.day; render(); }
+  else if(a==="tplace"){ state.tplace=el.dataset.place; render(); }
+  else if(a==="missing"){ state.missing=!state.missing; render(); }
+  else if(a==="pickme"){
+    const id = $("#who").value, me = ROSTER.find(r=>r.id===id);
+    if(!me){ $("#whoerr").textContent = "Choose your name from the list."; return; }
+    state.me = me; state.bus = me.bus; store.set("tour_me",me); store.set("tour_bus",me.bus); render();
+  }
+  else if(a==="switchme"){ state.me=null; store.set("tour_me",null); render(); }
+  else if(a==="unlock"){
+    if($("#pin").value===CONFIG.teacherPin){ state.unlocked=true; render(); }
+    else $("#pinerr").textContent = "That PIN is not correct.";
+  }
+  else if(a==="toggleci"){
+    const row = { student_id:state.me.id, bus:state.me.bus, day:state.day, place:el.dataset.place };
+    const done = el.classList.contains("done");
+    try{ done ? await db.remove(row) : await db.set(row); }
+    catch(err){ alert("Could not save. Check your connection and try again."); }
+    hydrateCheckin();
+  }
+  else if(a==="tmark"){
+    const id = el.dataset.id;
+    const has = teacherRows.some(r=>r.student_id===id && r.place===state.tplace);
+    const row = { student_id:id, bus:state.tbus, day:state.day, place:state.tplace };
+    try{ has ? await db.remove(row) : await db.set(row); }
+    catch(err){ alert("Could not save. Check your connection and try again."); }
+    hydrateTeacher();
+  }
+});
+
+(function(){
+  const a = fmtDate(DAYS[0].date,{month:"short",day:"numeric"});
+  const z = fmtDate(DAYS[DAYS.length-1].date,{month:"short",day:"numeric",year:"numeric"});
+  $("#range").textContent = a + " to " + z;
+  render();
+})();
+</script>
+</body>
+</html>
