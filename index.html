@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
 <title>Taiwan Educational Tour</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -83,12 +84,12 @@ select,input{width:100%;padding:12px;border:1.5px solid var(--rule);border-radiu
 .info h3{margin:18px 0 4px;font:700 18px var(--head)}
 .info ul{margin:4px 0;padding-left:20px}
 
-.nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(4,1fr);background:var(--card);
+.nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(5,1fr);background:var(--card);
   border-top:1px solid var(--rule);padding-bottom:env(safe-area-inset-bottom,0px)}
-.nav button{padding:16px 4px;border:0;border-top:4px solid transparent;background:none;font:700 15px var(--body);color:var(--muted)}
+.nav button{padding:16px 2px;border:0;border-top:4px solid transparent;background:none;font:700 14px var(--body);color:var(--muted)}
 .nav button[aria-current="page"]{color:var(--ink);border-top-color:var(--bus)}
 
-.learn{margin-top:8px;padding:8px 14px;border:2px solid var(--bus);border-radius:999px;background:var(--card);font:700 15px var(--body)}
+.learn{margin:8px 8px 0 0;padding:8px 14px;border:2px solid var(--bus);border-radius:999px;background:var(--card);font:700 15px var(--body)}
 .learn[aria-expanded="true"]{background:var(--bus);color:var(--bus-ink)}
 .panel{margin-top:12px;padding:14px;background:var(--card);border:1px solid var(--rule);border-left:5px solid var(--bus);border-radius:12px}
 .panel h4{margin:14px 0 4px;font:800 16px var(--head)}
@@ -106,8 +107,8 @@ textarea{width:100%;min-height:120px;padding:12px;border:1.5px solid var(--rule)
 .miss summary{cursor:pointer;font-weight:600}
 .qbox{margin:10px 0 4px;font-weight:600}
 
-.seg.four{grid-template-columns:repeat(4,1fr);gap:4px}
-.seg.four button{padding:10px 2px;font-size:14px}
+.seg.five{grid-template-columns:repeat(3,1fr);gap:6px}
+.seg.five button{padding:10px 2px;font-size:14px}
 .cps{list-style:none;margin:0;padding:0}
 .cp{border-bottom:1px solid var(--rule)}
 .cphead{display:grid;grid-template-columns:78px 1fr;column-gap:10px;width:100%;padding:14px 4px;border:0;background:none;text-align:left}
@@ -131,9 +132,29 @@ textarea{width:100%;min-height:120px;padding:12px;border:1.5px solid var(--rule)
 .stamp{display:grid;place-items:center;width:84px;height:84px;border-radius:50%;border:3px dashed var(--rule);color:var(--muted);font:800 24px var(--head);text-align:center}
 .stamp.on{border:5px double var(--bus);color:var(--ink);transform:rotate(-8deg);font-size:12px;letter-spacing:.08em}
 .okmsg{color:#17663F;font-weight:700}
-.qchip{display:inline-block;margin:8px 0 0 8px;padding:6px 12px;border-radius:999px;background:#E9EDE9;font:600 14px var(--body)}
+.qchip{display:inline-block;margin:8px 8px 0 0;padding:6px 12px;border-radius:999px;background:#E9EDE9;font:600 14px var(--body)}
 .qchip.got{background:var(--bus);color:var(--bus-ink)}
 .count{margin-left:8px;font:600 16px var(--body);color:var(--muted)}
+
+.stars{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:8px 0 2px}
+.star{min-height:48px;border:2px solid var(--ink);border-radius:12px;background:var(--card);font:800 20px var(--head)}
+.star[aria-pressed="true"]{background:var(--ink);color:#fff}
+.starlabels{display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px;color:var(--muted)}
+.evq{padding:16px 0;border-bottom:1px solid var(--rule)}
+.evq h3{margin:0 0 4px;font:800 18px/1.25 var(--head)}
+.evq p{margin:0 0 6px}
+.evq .qn{color:var(--muted)}
+.fbday{margin:20px 0 4px;font:800 19px var(--head)}
+.fb{border-bottom:1px solid var(--rule);padding-bottom:10px}
+.fbhead{display:flex;justify-content:space-between;align-items:baseline;gap:12px;width:100%;padding:12px 4px 8px;border:0;background:none;text-align:left}
+.fbt{font:700 17px/1.25 var(--head)}
+.fbt small{display:block;margin-top:2px;font:400 14px/1.35 var(--body);color:var(--muted)}
+.fbavg{font:800 26px var(--head);white-space:nowrap}
+.fbavg small{font:600 14px var(--body);color:var(--muted)}
+.bar{height:8px;margin:0 4px;background:#E3E8E4;border-radius:4px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--bus)}
+.buschips{display:flex;flex-wrap:wrap;gap:4px 16px;margin:8px 4px 0;font-size:15px}
+.cmt{margin:8px 4px 0;padding:8px 10px;background:var(--card);border-left:4px solid var(--rule);border-radius:6px}
 @media (prefers-reduced-motion:no-preference){.big,.busbtn,.chip{transition:background-color .15s}}
 </style>
 </head>
@@ -143,6 +164,7 @@ textarea{width:100%;min-height:120px;padding:12px;border:1.5px solid var(--rule)
 <nav class="nav" aria-label="Sections">
   <button data-tab="itinerary">Itinerary</button>
   <button data-tab="quest">Quest</button>
+  <button data-tab="eval">Evaluate</button>
   <button data-tab="info">Info</button>
   <button data-tab="teachers">Teachers</button>
 </nav>
@@ -152,7 +174,7 @@ textarea{width:100%;min-height:120px;padding:12px;border:1.5px solid var(--rule)
 const CONFIG = {
   // Paste your Google Apps Script web app link here (it ends in /exec).
   // Leave blank to run in demo mode (data is saved only on that one phone).
-  sheetsUrl: "https://script.google.com/macros/s/AKfycbwHROO2F8z26O2YwP5hojIlx-k2ibcszhrn4yeUoereFvP6GRla02BllR3zjgFjMerM/exec",
+  sheetsUrl: "",
   // Used in demo mode only. With Google Sheets, the real teacher PIN is set inside the script.
   teacherPin: "2026",
   // One link where students upload their quest photos and videos (a Padlet board, Google Drive folder or Google Form).
@@ -228,10 +250,10 @@ const GUIDE = {
            "TSMC, one of the world's biggest chipmakers, has its headquarters in the park."],
     question:"Why might many technology companies choose to work close together in one science park? Give one advantage and one possible problem." },
   "cks-hall": { name:"Chiang Kai-shek Memorial Hall", photo:"Chiang Kai-shek Memorial Hall Taipei",
-    facts:["The hall honors Chiang Kai-shek, who died in 1975. It was completed in 1980.",
-           "The octagonal main building has white walls and a blue tile roof.",
-           "It stands at one end of Liberty Square, which is also home to the National Theater and National Concert Hall."],
-    question:"Look closely at the building and the square. Which details stood out to you (shapes, colors, symbols), and what message do you think the designers wanted to send?" },
+    facts:["Chiang Kai-shek was born in 1887 in Zhejiang, China. He led the Republic of China's army in the Northern Expedition (1926 to 1928) and was a wartime leader during World War II.",
+           "After the Nationalists lost the Chinese Civil War, his government moved to Taiwan in 1949. He led it until he died on 5 April 1975.",
+           "The hall was completed in April 1980, five years after his death. Taiwan was under martial law from 1949 to 1987, so people today hold different views about his legacy."],
+    question:"Chiang Kai-shek's life covers some of the biggest events in modern Chinese and Taiwanese history. Using the exhibition and what your guide shares, describe two events from his life. Then explain why people today hold different opinions about his legacy." },
   "jinwen": { name:"Jinwen University", photo:"Jinwen University of Science and Technology Xindian",
     facts:["Jinwen University of Science and Technology is a private university in Xindian District, New Taipei City.",
            "It became a university of science and technology in 2007. Before that it was an institute of technology.",
@@ -290,8 +312,11 @@ const placeFor = title => { const r = PLACE_RULES.find(x=>x[0].test(title)); ret
 /* ============ ITINERARY ============ */
 const ALL = [1,2,3,4];
 // cp = a checkpoint where teachers take attendance. Flights are skipped. Add {cp:false} to any stop to skip it too.
-const s = (t,title,note="",o={}) => ({ t, title, note, buses:ALL, p:placeFor(title), cp:!/^Flight/i.test(title), ...o });
-const meal = (t,title) => s(t,title,"",{kind:"meal"});
+// rate = students can rate this stop. Flights, pick-ups, airport arrivals and "back to the hotel" are skipped.
+// Add {rate:false} to any stop to hide its rating button, or {rate:true} to show one.
+const s = (t,title,note="",o={}) => ({ t, title, note, buses:ALL, p:placeFor(title), cp:!/^Flight/i.test(title),
+  rate:!/^(Flight|Pick up|Back to|Arrival|Arrive|Meet up)/i.test(title), ...o });
+const meal = (t,title) => s(t,title,"",{kind:"meal",p:null});   // meals never get a guide question
 
 const DAYS = [
   { n:1, date:"2026-10-14", assumedDate:true, stops:[
@@ -368,13 +393,28 @@ const QUESTS = [
   { id:"sky-high",       place:"taipei-101",          title:"Sky High",           text:"Take a creative photo with Taipei 101 behind you. Both partners should pose to show how tall it is." },
   { id:"space-teacher",  place:"astronomical-museum", title:"Space Teacher",      text:"Stand next to your favorite exhibit and record a 20-second video teaching one space fact." },
   { id:"spot-three",     place:"ximending",           title:"Spot Three",         text:"Photograph three things you would not see in your hometown. Say what each one is in the caption." },
-  { id:"thank-you",      place:"raohe",               title:"Say Thank You",      text:"Learn how to say thank you in Mandarin (謝謝, xièxie). Say it to a vendor, with a teacher nearby, while your partner records you." },
+  { id:"thank-you",      place:"ximending",           title:"Say Thank You",      text:"Learn how to say thank you in Mandarin (謝謝, xièxie). Say it to a shopkeeper or street-food vendor, with a teacher nearby, while your partner records you." },
   { id:"big-water",      place:"shifen-falls",        title:"How Big Is It?",     text:"Take a photo that shows how big the waterfall is, with both partners in the picture." },
   { id:"lantern-wish",   place:"pingxi",              title:"Lantern Wish",       text:"Take a photo of your lantern with your group's message before you release it." },
   { id:"tea-critic",     place:"bubble-tea",          title:"Tea Critic",         text:"Record a 15-second review of your bubble tea: give it a score out of 10 and explain why." }
 ];
-const QUEST_OF = {};
-QUESTS.forEach(q => { QUEST_OF[q.place] = q; });
+const QUESTS_OF = {};   // a place can have more than one quest
+QUESTS.forEach(q => { (QUESTS_OF[q.place] = QUESTS_OF[q.place] || []).push(q); });
+/* ============ FINAL EVALUATION ============
+   type "rate" = a 1 to 5 rating with an optional comment. type "text" = an open question.
+   You can edit the wording. Keep each id as it is. */
+const EVAL = [
+  { id:"prep",       type:"rate", title:"Preparation by the school", text:"How did you find the preparation help from the school, such as the orientations and the basic life skills training?" },
+  { id:"itinerary",  type:"rate", title:"The itinerary",             text:"How did you find the itinerary?" },
+  { id:"foc",        type:"rate", title:"Your FOCs",                 text:"Rate the FOCs on your bus: how well they assisted you and how they handled the group." },
+  { id:"guide",      type:"rate", title:"Your tour guide",           text:"How did you find your tour guide?" },
+  { id:"meaningful", type:"text", title:"Most meaningful part",      text:"What part of the tour did you find most meaningful?" },
+  { id:"least",      type:"text", title:"Least meaningful part",     text:"What part of the tour did you find least meaningful?" },
+  { id:"learned",    type:"text", title:"What you learned",          text:"What did you learn from the tour (personal or academic)?" },
+  { id:"improve",    type:"text", title:"Improvements",              text:"What would you like to see improved in the next tour planning?" },
+  { id:"overall",    type:"rate", title:"Overall experience",        text:"How was your overall experience in the tour?" }
+];
+const RATING_WORDS = ["", "Poor", "Fair", "Good", "Very good", "Excellent"];
 const questDay = q => (PLACE_LIST.find(p=>p.key===q.place) || { day:1 }).day;
 
 /* ============ HELPERS ============ */
@@ -426,6 +466,26 @@ async function api(action, payload = {}){
 const qStore = { get(){ return store.get("tour_queue",[]); }, set(v){ store.set("tour_queue",v); } };
 
 const db = {
+  // Ratings and the final evaluation are write-only for students. Only teachers can read them,
+  // and the script removes the student ID before sending them.
+  async setRating(row){
+    if(remote) return api("setRating", row);
+    const all = store.get("tour_ratings",[]).filter(x=>!(x.student_id===row.student_id && x.stop_key===row.stop_key));
+    all.push({ ...row, updated_at:new Date().toISOString() }); store.set("tour_ratings",all);
+  },
+  async allRatings(){
+    if(remote) return api("allRatings");
+    return store.get("tour_ratings",[]).map(({student_id,...rest})=>rest);
+  },
+  async setEval(row){
+    if(remote) return api("setEvaluation", row);
+    const all = store.get("tour_eval",[]).filter(x=>x.student_id!==row.student_id);
+    all.push({ ...row, updated_at:new Date().toISOString() }); store.set("tour_eval",all);
+  },
+  async allEvals(){
+    if(remote) return api("allEvaluations");
+    return store.get("tour_eval",[]).map(({student_id,...rest})=>rest);
+  },
   async myAnswers(sid){
     if(remote) return api("myAnswers",{ student_id:sid });
     return store.get("tour_answers",[]).filter(x=>x.student_id===sid);
@@ -506,7 +566,8 @@ const state = {
   tab:"itinerary", bus:store.get("tour_bus",1), day:todayDay(), me:store.get("tour_me",null),
   unlocked:false, pin:"", tname:store.get("tour_tname",""),
   tmode:"checkin", tbus:1, tq:null, tquest:null, tbusF:0,
-  open:null, mine:{}, stamps:{}, cpRows:[], cpErr:false, cp:null, qrows:[]
+  open:null, mine:{}, stamps:{}, cpRows:[], cpErr:false, cp:null, qrows:[],
+  ratings:{}, rating:null, rdraft:{}, ev:{}, evSavedAt:"", fbmode:"stops", fbOpen:null, fbRows:[], evRows:[]
 };
 let poll = null;
 
@@ -549,7 +610,7 @@ function questBlock(q){
 }
 
 function panelHTML(key){
-  const pl = GUIDE[key], q = QUEST_OF[key];
+  const pl = GUIDE[key], qs = QUESTS_OF[key] || [];
   let draft = null;
   try{ draft = localStorage.getItem("tour_draft_"+key); }catch(e){}
   const val = draft !== null ? draft : (state.mine[key] || "");
@@ -563,20 +624,46 @@ function panelHTML(key){
          <button class="primary" data-act="saveans" data-p="${key}">Save answer</button>
          <p id="ans-status" class="muted" role="status"></p>`
       : `<p class="muted">Pick your number in the <button class="link" data-tab="quest">Quest</button> tab to write and save your answer.</p>`}
-    ${q ? questBlock(q) : ""}
+    ${qs.map(q=>questBlock(q)).join("")}
   </div>`;
 }
 
-function stopHTML(x){
+const titleFor = x => x.p ? GUIDE[x.p].name : x.title;
+// The same place shares one rating key on every bus. Meals and other stops get a key from the day and title.
+const stopKey = (day,x) => x.p ? x.p : ("d" + day + "-" + slug(x.title).slice(0,32));
+function rdraft(key){
+  if(!state.rdraft[key]){ const sv = state.ratings[key]; state.rdraft[key] = { rating:sv?sv.rating:0, comment:sv?sv.comment:"" }; }
+  return state.rdraft[key];
+}
+function starsHTML(name, value){
+  return `<div class="stars" role="group" aria-label="Rating from 1 to 5" data-stars="${name}">${[1,2,3,4,5].map(n=>
+    `<button type="button" class="star" data-act="star" data-name="${name}" data-v="${n}" aria-pressed="${n===value}" aria-label="${n} of 5, ${RATING_WORDS[n]}">${n}</button>`).join("")}</div>
+    <div class="starlabels"><span>1 Poor</span><span>5 Excellent</span></div>`;
+}
+function ratePanel(key, x, day){
+  if(!state.me) return `<div class="panel"><p class="muted" style="margin:0">Pick your number in the <button class="link" data-tab="quest">Quest</button> tab to rate this stop.</p></div>`;
+  const d = rdraft(key);
+  return `<div class="panel"><h4>How was this stop?</h4>
+    ${starsHTML("r:"+key, d.rating)}
+    <label for="rc-${key}">Comment (optional)</label>
+    <textarea id="rc-${key}" data-rc="${key}" rows="3" maxlength="500" placeholder="What did you like, or what could be better?">${esc(d.comment)}</textarea>
+    <button class="primary" data-act="saverate" data-k="${key}" data-day="${day}" data-t="${esc(titleFor(x))}">Save rating</button>
+    <p id="rate-status" class="muted" role="status"></p></div>`;
+}
+
+function stopHTML(x, day){
   const tm = splitTime(x.t);
-  const pl = x.p ? GUIDE[x.p] : null, q = x.p ? QUEST_OF[x.p] : null;
+  const pl = x.p ? GUIDE[x.p] : null, qs = x.p ? (QUESTS_OF[x.p] || []) : [];
   const open = !!pl && state.open === x.p;
   const done = !!pl && !!state.mine[x.p];
-  const got = !!q && !!state.stamps[q.id];
+  const earned = qs.filter(q=>state.stamps[q.id]).length;
+  const key = x.rate ? stopKey(day,x) : null, saved = key ? state.ratings[key] : null;
+  const rateOpen = !!key && state.rating === key;
+  const chip = !qs.length ? "" : `<span class="qchip ${earned===qs.length?"got":""}">${earned===qs.length ? (qs.length>1?"Stamps earned":"Stamp earned") : (qs.length>1 ? qs.length+" quests" : "Quest")}</span>`;
   return `<li class="stop ${x.kind||""}"><time>${tm.start}<small>${tm.mer}</small>${tm.end?`<small>to ${tm.end}</small>`:""}</time><span class="mark"></span>
     <div><h3>${esc(x.title)}${draftTag(x.check)}</h3>${x.note?`<p>${esc(x.note)}</p>`:""}
-    ${pl?`<button class="learn" data-act="openplace" data-p="${x.p}" aria-expanded="${open}">${done?"Answered. View or edit":"Learn and answer"}</button>`:""}${q?`<span class="qchip ${got?"got":""}">${got?"Stamp earned":"Quest"}</span>`:""}
-    ${open?panelHTML(x.p):""}</div></li>`;
+    ${pl?`<button class="learn" data-act="openplace" data-p="${x.p}" aria-expanded="${open}">${done?"Answered. View or edit":"Learn and answer"}</button>`:""}${key?`<button class="learn" data-act="openrate" data-k="${key}" aria-expanded="${rateOpen}">${saved?`Rated ${saved.rating} of 5. Edit`:"Rate this stop"}</button>`:""}${chip}
+    ${open?panelHTML(x.p):""}${rateOpen?ratePanel(key,x,day):""}</div></li>`;
 }
 
 function viewItinerary(){
@@ -585,19 +672,40 @@ function viewItinerary(){
   const link = CONFIG.photoLinks[d.n];
   return busPicker(state.bus,"bus") + dayTabs() +
     `<h2 class="dayhead">${fmtDate(d.date,{weekday:"long",month:"long",day:"numeric"})}${draftTag(d.assumedDate)}</h2>` +
-    `<ol class="line">${stops.map(stopHTML).join("")}</ol>` +
+    `<ol class="line">${stops.map(x=>stopHTML(x,d.n)).join("")}</ol>` +
     (link ? `<a class="photo" href="${esc(link)}" target="_blank" rel="noopener">Add your photos for Day ${d.n}</a>` : "");
 }
 
+const pickCard = msg => `<section class="card"><h2>Who are you?</h2><p class="muted">${msg}</p>
+  <label for="who">Your number</label>
+  <select id="who"><option value="">Choose your number</option>${BUSES.map(b=>
+    `<optgroup label="Bus ${b.n}">${rosterOf(b.n).map(r=>`<option value="${r.id}">No. ${r.n}</option>`).join("")}</optgroup>`).join("")}</select>
+  <p id="whoerr" class="err" role="alert"></p>
+  <button class="primary" data-act="pickme">Continue</button></section>`;
+
+function evQuestion(q, n){
+  const e = state.ev;
+  if(q.type==="rate") return `<section class="evq"><h3><span class="qn">${n}.</span> ${esc(q.title)}</h3><p>${esc(q.text)}</p>
+    ${starsHTML("e:"+q.id, e[q.id+"_r"]||0)}
+    <label for="ev-${q.id}-c">Comment (optional)</label>
+    <textarea id="ev-${q.id}-c" data-ev="${q.id}_c" rows="3" maxlength="500">${esc(e[q.id+"_c"]||"")}</textarea></section>`;
+  return `<section class="evq"><h3><span class="qn">${n}.</span> ${esc(q.title)}</h3>
+    <label for="ev-${q.id}" style="margin-top:0">${esc(q.text)}</label>
+    <textarea id="ev-${q.id}" data-ev="${q.id}" rows="4" maxlength="1000">${esc(e[q.id]||"")}</textarea></section>`;
+}
+
+function viewEval(){
+  if(!state.me) return pickCard("Pick your bus and assigned number once. This phone will remember it.");
+  return `<h2 class="dayhead">Final evaluation</h2>
+    <p class="muted" style="margin-top:0">Be honest and specific. Your feedback helps us plan the next tour. You can save now and come back to finish later.</p>
+    <p class="muted">Bus ${state.me.bus}, No. ${state.me.n}. <button class="link" data-act="switchme">Not you?</button></p>
+    ${EVAL.map((q,i)=>evQuestion(q,i+1)).join("")}
+    <button class="primary" data-act="evsave">Save my evaluation</button>
+    <p id="ev-status" class="muted" role="status">${state.evSavedAt ? "Last saved at "+fmtTime(state.evSavedAt)+". You can still edit and save again." : ""}</p>`;
+}
+
 function viewQuest(){
-  if(!state.me){
-    return `<section class="card"><h2>Who are you?</h2><p class="muted">Pick your bus and assigned number once. This phone will remember it, and you will see your pair's stamps here.</p>
-      <label for="who">Your number</label>
-      <select id="who"><option value="">Choose your number</option>${BUSES.map(b=>
-        `<optgroup label="Bus ${b.n}">${rosterOf(b.n).map(r=>`<option value="${r.id}">No. ${r.n}</option>`).join("")}</optgroup>`).join("")}</select>
-      <p id="whoerr" class="err" role="alert"></p>
-      <button class="primary" data-act="pickme">Continue</button></section>`;
-  }
+  if(!state.me) return pickCard("Pick your bus and assigned number once. This phone will remember it, and you will see your pair's stamps here.");
   const pr = PAIRS[state.me.pair];
   const mates = pr.members.filter(m=>m.id!==state.me.id).map(m=>"No. "+m.n);
   const got = QUESTS.filter(q=>state.stamps[q.id]).length;
@@ -641,9 +749,9 @@ function viewTeachers(){
       <p id="pinerr" class="err" role="alert"></p><button class="primary" data-act="unlock">Open</button></section>`;
   }
   const m = state.tmode;
-  const bar = `<div class="seg four" role="group" aria-label="Teacher view">${[["checkin","Check in"],["overview","Overview"],["answers","Answers"],["quest","Quest"]].map(k=>
+  const bar = `<div class="seg five" role="group" aria-label="Teacher view">${[["checkin","Check in"],["overview","Overview"],["answers","Answers"],["quest","Quest"],["feedback","Feedback"]].map(k=>
     `<button data-act="tmode" data-mode="${k[0]}" aria-pressed="${m===k[0]}">${k[1]}</button>`).join("")}</div>`;
-  return bar + (m==="checkin" ? viewCp() : m==="overview" ? viewOverview() : m==="answers" ? viewAnswers() : viewQuestAdmin()) +
+  return bar + (m==="checkin" ? viewCp() : m==="overview" ? viewOverview() : m==="answers" ? viewAnswers() : m==="feedback" ? viewFeedback() : viewQuestAdmin()) +
     `<button class="link" style="margin:18px 0 6px" data-act="lock">Lock and clear names from this phone</button>`;
 }
 
@@ -687,6 +795,81 @@ function viewOverview(){
   return `<div id="sync" role="status">${syncHTML()}</div>` + dayTabs() +
     `<div id="ov"><p class="muted">Loading...</p></div>
      <p class="muted" style="font-size:15px">Shows each bus's most recent check-in for the day. It refreshes by itself.</p>`;
+}
+
+function viewFeedback(){
+  const m = state.fbmode;
+  return `<div class="seg" role="group" aria-label="Feedback type">
+      <button data-act="fbmode" data-mode="stops" aria-pressed="${m==="stops"}">Stop ratings</button>
+      <button data-act="fbmode" data-mode="eval" aria-pressed="${m==="eval"}">Final evaluation</button></div>
+    <label for="tbf">Show</label>
+    <select id="tbf" data-change="tbusf"><option value="0">All buses</option>${BUSES.map(b=>`<option value="${b.n}" ${state.tbusF===b.n?"selected":""}>Bus ${b.n}</option>`).join("")}</select>
+    <div id="fbbody"><p class="muted">Loading...</p></div>
+    <button class="primary" data-act="fbcsv">Download as CSV</button>
+    <button class="link" style="margin-top:12px" data-act="fbrefresh">Refresh</button>
+    <p class="muted" style="font-size:15px">Feedback is shown here without student names or numbers.${remote?"":" Demo mode: feedback stays on this phone."}</p>`;
+}
+
+const avg = a => a.length ? a.reduce((x,y)=>x+y,0)/a.length : 0;
+const f1 = n => (Math.round(n*10)/10).toFixed(1);
+const commentsHTML = rs => {
+  const w = rs.filter(r=>r.comment);
+  return w.length ? w.map(r=>`<p class="cmt"><b>${r.rating} of 5</b>, Bus ${r.bus}: ${esc(r.comment)}</p>`).join("")
+                  : `<p class="muted" style="margin:8px 4px 0">No comments on this stop.</p>`;
+};
+
+function paintFeedback(){
+  const box = $("#fbbody"); if(!box) return;
+  const bf = state.tbusF;
+  if(state.fbmode==="stops"){
+    const rows = state.fbRows.filter(r=>!bf || r.bus===bf);
+    const by = {}; rows.forEach(r=>{ (by[r.stop_key] = by[r.stop_key] || []).push(r); });
+    let html = "";
+    DAYS.forEach(d=>{
+      const seen = new Set(), items = [];
+      d.stops.forEach(x=>{ if(!x.rate) return; const k = stopKey(d.n,x); if(seen.has(k)) return; seen.add(k); items.push({ k, title:titleFor(x) }); });
+      if(!items.length) return;
+      html += `<h3 class="fbday">Day ${d.n}, ${fmtDate(d.date,{weekday:"long",month:"short",day:"numeric"})}</h3>`;
+      items.forEach(it=>{
+        const rs = by[it.k] || [], a = avg(rs.map(r=>r.rating)), open = state.fbOpen===it.k;
+        html += `<article class="fb"><button class="fbhead" data-act="fbopen" data-k="${it.k}" aria-expanded="${open}">
+          <span class="fbt">${esc(it.title)}<small>${rs.length ? rs.length+" rating"+(rs.length>1?"s":"") : "No ratings yet"}</small></span>
+          ${rs.length ? `<span class="fbavg">${f1(a)}<small> of 5</small></span>` : ""}</button>
+          ${rs.length ? `<div class="bar"><i style="width:${a/5*100}%"></i></div>` : ""}${open ? commentsHTML(rs) : ""}</article>`;
+      });
+    });
+    box.innerHTML = html || `<p class="muted">No stops to rate.</p>`;
+    return;
+  }
+  const rows = state.evRows.filter(r=>!bf || r.bus===bf);
+  const total = ROSTER.filter(r=>!bf || r.bus===bf).length;
+  let html = `<div class="sum"><div><b>${rows.length}</b> of ${total} submitted</div></div>`;
+  EVAL.forEach((q,i)=>{
+    if(q.type==="rate"){
+      const vals = rows.map(r=>r[q.id+"_r"]).filter(Boolean), cm = rows.filter(r=>r[q.id+"_c"]);
+      const per = bf ? "" : `<div class="buschips">${BUSES.map(b=>{
+        const v = rows.filter(r=>r.bus===b.n).map(r=>r[q.id+"_r"]).filter(Boolean);
+        return `<span>Bus ${b.n}: <b>${v.length ? f1(avg(v)) : "-"}</b></span>`; }).join("")}</div>`;
+      html += `<article class="fb"><div class="fbhead"><span class="fbt">${i+1}. ${esc(q.title)}<small>${vals.length} rating${vals.length===1?"":"s"}</small></span>
+        ${vals.length ? `<span class="fbavg">${f1(avg(vals))}<small> of 5</small></span>` : ""}</div>
+        ${vals.length ? `<div class="bar"><i style="width:${avg(vals)/5*100}%"></i></div>` : ""}${per}
+        ${cm.length ? `<details class="miss"><summary>Comments (${cm.length})</summary>${cm.map(r=>`<p class="cmt"><b>${r[q.id+"_r"] ? r[q.id+"_r"]+" of 5" : "No rating"}</b>, Bus ${r.bus}: ${esc(r[q.id+"_c"])}</p>`).join("")}</details>` : ""}</article>`;
+    } else {
+      const ans = rows.filter(r=>r[q.id]);
+      html += `<article class="fb"><div class="fbhead"><span class="fbt">${i+1}. ${esc(q.title)}<small>${esc(q.text)}</small></span></div>
+        <details class="miss"><summary>Answers (${ans.length})</summary>${ans.length ? ans.map(r=>`<p class="cmt"><b>Bus ${r.bus}</b>: ${esc(r[q.id])}</p>`).join("") : `<p class="muted">No answers yet.</p>`}</details></article>`;
+    }
+  });
+  box.innerHTML = html;
+}
+
+async function hydrateFeedback(){
+  if(state.tab!=="teachers" || !state.unlocked || state.tmode!=="feedback") return;
+  const box = $("#fbbody"); if(!box) return;
+  try{
+    if(state.fbmode==="stops") state.fbRows = await db.allRatings(); else state.evRows = await db.allEvals();
+  }catch(e){ box.innerHTML = `<p class="err">Could not load feedback. Check the connection and tap Refresh.</p>`; return; }
+  paintFeedback();
 }
 
 function viewQuestAdmin(){
@@ -821,9 +1004,52 @@ async function loadStamps(){
   }catch(e){}
 }
 
+const mineKey = (kind,id) => "tour_" + kind + "_" + id;
+const typing = () => !!(document.activeElement && document.activeElement.tagName==="TEXTAREA");
+// A student's own ratings and evaluation are remembered on their phone (students cannot read them back from the Sheet).
+function loadFeedback(){
+  state.ratings = {}; state.ev = {}; state.evSavedAt = ""; state.rdraft = {}; state.rating = null;
+  if(!state.me) return;
+  state.ratings = store.get(mineKey("ratings",state.me.id), {});
+  const e = store.get(mineKey("eval",state.me.id), null);
+  if(e){ state.ev = e.data || {}; state.evSavedAt = e.savedAt || ""; }
+}
+const persistEv = () => { if(state.me) store.set(mineKey("eval",state.me.id), { data:state.ev, savedAt:state.evSavedAt }); };
+
+function saveCSVFile(name, lines){
+  const blob = new Blob(["﻿" + lines.join("\r\n")], { type:"text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = name + ".csv";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 2000);
+}
+// Feedback files never contain student names, numbers or IDs.
+async function downloadFeedbackCSV(){
+  const lines = [];
+  if(state.fbmode==="stops"){
+    const rows = await db.allRatings();
+    lines.push(["bus","day","stop","rating","comment","saved_at"].map(csvCell).join(","));
+    rows.forEach(r=>lines.push([r.bus,r.day,r.stop_title,r.rating,r.comment,r.updated_at].map(csvCell).join(",")));
+    return saveCSVFile("tour-stop-ratings", lines);
+  }
+  const rows = await db.allEvals();
+  const head = ["bus"];
+  EVAL.forEach(q=>{ if(q.type==="rate") head.push(q.title+" (rating)", q.title+" (comment)"); else head.push(q.title); });
+  head.push("saved_at");
+  lines.push(head.map(csvCell).join(","));
+  rows.forEach(r=>{
+    const row = [r.bus];
+    EVAL.forEach(q=>{ if(q.type==="rate") row.push(r[q.id+"_r"]||"", r[q.id+"_c"]||""); else row.push(r[q.id]||""); });
+    row.push(r.updated_at);
+    lines.push(row.map(csvCell).join(","));
+  });
+  saveCSVFile("tour-final-evaluations", lines);
+}
+
 function refreshTeacher(){
   if(state.tab!=="teachers" || !state.unlocked) return;
-  ({ checkin:hydrateCp, overview:hydrateOverview, answers:hydrateAnswers, quest:hydrateQuestAdmin })[state.tmode]();
+  ({ checkin:hydrateCp, overview:hydrateOverview, answers:hydrateAnswers, quest:hydrateQuestAdmin, feedback:hydrateFeedback })[state.tmode]();
 }
 
 function csvCell(v){
@@ -855,7 +1081,7 @@ function render(){
   const b = BUSES[state.bus-1];
   document.documentElement.style.setProperty("--bus", b.color);
   document.documentElement.style.setProperty("--bus-ink", b.ink);
-  const views = { itinerary:viewItinerary, quest:viewQuest, info:viewInfo, teachers:viewTeachers };
+  const views = { itinerary:viewItinerary, quest:viewQuest, eval:viewEval, info:viewInfo, teachers:viewTeachers };
   $("#app").innerHTML = views[state.tab]();
   document.querySelectorAll(".nav button").forEach(n=>n.setAttribute("aria-current", n.dataset.tab===state.tab?"page":"false"));
   if(state.tab==="quest") loadStamps();
@@ -876,9 +1102,9 @@ document.addEventListener("click", async e=>{
     const id = $("#who").value, me = ROSTER.find(r=>r.id===id);
     if(!me){ $("#whoerr").textContent = "Choose your number from the list."; return; }
     state.me = me; state.bus = me.bus; state.mine = {}; state.stamps = {};
-    store.set("tour_me",me); store.set("tour_bus",me.bus); render(); loadMine();
+    store.set("tour_me",me); store.set("tour_bus",me.bus); loadFeedback(); render(); loadMine();
   }
-  else if(a==="switchme"){ state.me=null; state.mine={}; state.stamps={}; store.set("tour_me",null); render(); }
+  else if(a==="switchme"){ state.me=null; state.mine={}; state.stamps={}; store.set("tour_me",null); loadFeedback(); render(); }
   else if(a==="unlock"){
     const v = $("#pin").value, nm = ($("#tname").value||"").trim();
     try{
@@ -893,6 +1119,60 @@ document.addEventListener("click", async e=>{
       $("#pinerr").textContent = (err.fatal || err.message==="bad pin")
         ? "That PIN is not correct." : "Could not reach the server. Check the connection and try again.";
     }
+  }
+  else if(a==="openrate"){
+    const k = el.dataset.k;
+    state.rating = (state.rating===k) ? null : k;
+    delete state.rdraft[k];
+    render();
+  }
+  else if(a==="star"){
+    const name = el.dataset.name, kind = name.slice(0,1), id = name.slice(2), v = +el.dataset.v;
+    if(kind==="r") rdraft(id).rating = v;
+    else { state.ev[id+"_r"] = v; persistEv(); }
+    document.querySelectorAll(`[data-stars="${name}"] .star`).forEach(b=>b.setAttribute("aria-pressed", String(+b.dataset.v===v)));
+  }
+  else if(a==="saverate"){
+    if(!state.me) return;
+    const key = el.dataset.k, d = rdraft(key), st = $("#rate-status");
+    if(!d.rating){ st.textContent = "Tap a number from 1 to 5 first."; return; }
+    st.textContent = "Saving...";
+    const comment = d.comment.trim();
+    try{
+      await db.setRating({ student_id:state.me.id, bus:state.me.bus, day:+el.dataset.day, stop_key:key, stop_title:el.dataset.t, rating:d.rating, comment });
+      state.ratings[key] = { rating:d.rating, comment };
+      store.set(mineKey("ratings",state.me.id), state.ratings);
+      st.textContent = "Saved at " + fmtTime(new Date().toISOString()) + ". Thank you!";
+      const btn = document.querySelector(`.learn[data-k="${key}"]`);
+      if(btn) btn.textContent = `Rated ${d.rating} of 5. Edit`;
+    }catch(err){
+      st.textContent = "Could not save. Check your connection and try again.";
+    }
+  }
+  else if(a==="evsave"){
+    if(!state.me) return;
+    const st = $("#ev-status"), e = state.ev, p = { student_id:state.me.id, bus:state.me.bus };
+    EVAL.forEach(q=>{
+      if(q.type==="rate"){ p[q.id+"_r"] = +e[q.id+"_r"] || 0; p[q.id+"_c"] = String(e[q.id+"_c"]||"").trim(); }
+      else p[q.id] = String(e[q.id]||"").trim();
+    });
+    const blank = EVAL.filter(q => q.type==="rate" ? !p[q.id+"_r"] : !p[q.id]).length;
+    if(blank===EVAL.length && !EVAL.some(q=>q.type==="rate" && p[q.id+"_c"])){ st.textContent = "Answer at least one question first."; return; }
+    st.textContent = "Saving...";
+    try{
+      await db.setEval(p);
+      state.evSavedAt = new Date().toISOString(); persistEv();
+      st.textContent = "Saved at " + fmtTime(state.evSavedAt) + ". " + (blank ? blank+" question"+(blank>1?"s":"")+" still blank. You can come back to finish." : "All questions answered. Thank you!");
+    }catch(err){
+      st.textContent = "Could not save. Your answers are kept on this phone. Try again when you have signal.";
+    }
+  }
+  else if(a==="fbmode"){ state.fbmode = el.dataset.mode; state.fbOpen = null; render(); }
+  else if(a==="fbopen"){ state.fbOpen = (state.fbOpen===el.dataset.k) ? null : el.dataset.k; paintFeedback(); }
+  else if(a==="fbrefresh"){ hydrateFeedback(); }
+  else if(a==="fbcsv"){
+    try{ await downloadFeedbackCSV(); }
+    catch(err){ alert("Could not create the file. Check the connection and try again."); }
   }
   else if(a==="lock"){
     state.unlocked = false; state.pin = ""; state.cp = null; NAMES = {}; store.set("tour_names", {}); render();
@@ -966,6 +1246,8 @@ document.addEventListener("input", e=>{
   if(el.matches && el.matches("textarea[data-draft]")){
     try{ localStorage.setItem("tour_draft_"+el.dataset.draft, el.value); }catch(err){}
   }
+  else if(el.matches && el.matches("textarea[data-rc]")){ rdraft(el.dataset.rc).comment = el.value; }
+  else if(el.matches && el.matches("textarea[data-ev]")){ state.ev[el.dataset.ev] = el.value; persistEv(); }
 });
 
 (function(){
@@ -973,7 +1255,7 @@ document.addEventListener("input", e=>{
   const z = fmtDate(DAYS[DAYS.length-1].date,{month:"short",day:"numeric",year:"numeric"});
   $("#range").textContent = a + " to " + z;
   if(state.me){ const fresh = ROSTER.find(r=>r.id===state.me.id); state.me = fresh || null; if(fresh) store.set("tour_me",fresh); }
-  render(); loadMine(); loadStamps();
+  loadFeedback(); render(); loadMine(); loadStamps();
   const tick = () => flushQueue().then(n=>{ updateSync(); if(n) refreshTeacher(); });
   setInterval(tick, 15000);
   if(window.addEventListener) window.addEventListener("online", tick);
