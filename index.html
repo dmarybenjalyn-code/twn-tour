@@ -26,6 +26,9 @@ button{font:inherit;color:inherit;cursor:pointer}
 .top{background:var(--bus);color:var(--bus-ink);padding:calc(18px + env(safe-area-inset-top,0px)) 20px 18px}
 .top h1{margin:0;font:800 30px/1.05 var(--head);font-stretch:100%;letter-spacing:-.01em}
 .top p{margin:6px 0 0;font-size:16px;opacity:.92}
+.whobar{background:#FFF1D6;color:var(--ink);padding:8px 16px;font-size:15px;text-align:center}
+.whobar:empty{display:none}
+.who{margin:0 0 8px;font-size:15px}
 .wrap{max-width:640px;margin:0 auto;padding:0 16px}
 
 .buses{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:16px 0 4px}
@@ -160,6 +163,7 @@ textarea{width:100%;min-height:120px;padding:12px;border:1.5px solid var(--rule)
 </head>
 <body>
 <header class="top"><div class="wrap" style="padding:0"><h1>Taiwan Educational Tour</h1><p id="range"></p></div></header>
+<div class="whobar" id="whobar" role="status"></div>
 <main class="wrap" id="app"></main>
 <nav class="nav" aria-label="Sections">
   <button data-tab="itinerary">Itinerary</button>
@@ -619,7 +623,7 @@ function panelHTML(key){
     <a class="photobtn" href="${photoURL}" target="_blank" rel="noopener">See photos of this place</a>
     <h4>Guide question</h4><p class="q">${esc(pl.question)}</p>
     ${state.me
-      ? `<label for="ans-${key}">Your answer</label>
+      ? `${meTag()}<label for="ans-${key}">Your answer</label>
          <textarea id="ans-${key}" data-draft="${key}" rows="6" maxlength="2000" placeholder="Write your answer here">${esc(val)}</textarea>
          <button class="primary" data-act="saveans" data-p="${key}">Save answer</button>
          <p id="ans-status" class="muted" role="status"></p>`
@@ -643,7 +647,7 @@ function starsHTML(name, value){
 function ratePanel(key, x, day){
   if(!state.me) return `<div class="panel"><p class="muted" style="margin:0">Pick your number in the <button class="link" data-tab="quest">Quest</button> tab to rate this stop.</p></div>`;
   const d = rdraft(key);
-  return `<div class="panel"><h4>How was this stop?</h4>
+  return `<div class="panel"><h4>How was this stop?</h4>${meTag()}
     ${starsHTML("r:"+key, d.rating)}
     <label for="rc-${key}">Comment (optional)</label>
     <textarea id="rc-${key}" data-rc="${key}" rows="3" maxlength="500" placeholder="What did you like, or what could be better?">${esc(d.comment)}</textarea>
@@ -1076,6 +1080,12 @@ async function downloadCSV(place){
 }
 
 /* ============ RENDER + EVENTS ============ */
+const meLabel = () => state.me ? `Bus ${state.me.bus}, No. ${state.me.n}` : "";
+const meTag = () => state.me ? `<p class="who">Answering as <b>${meLabel()}</b>. Wrong number? <button class="link" data-act="switchme">Not you?</button></p>` : "";
+function updateWho(){
+  const el = $("#whobar"); if(!el) return;
+  el.innerHTML = (state.me && state.tab!=="teachers") ? `Signed in as <b>${meLabel()}</b>. <button class="link" data-act="switchme">Not you?</button>` : "";
+}
 function render(){
   clearInterval(poll);
   const b = BUSES[state.bus-1];
@@ -1083,6 +1093,7 @@ function render(){
   document.documentElement.style.setProperty("--bus-ink", b.ink);
   const views = { itinerary:viewItinerary, quest:viewQuest, eval:viewEval, info:viewInfo, teachers:viewTeachers };
   $("#app").innerHTML = views[state.tab]();
+  updateWho();
   document.querySelectorAll(".nav button").forEach(n=>n.setAttribute("aria-current", n.dataset.tab===state.tab?"page":"false"));
   if(state.tab==="quest") loadStamps();
   if(state.tab==="teachers" && state.unlocked){
@@ -1142,7 +1153,7 @@ document.addEventListener("click", async e=>{
       await db.setRating({ student_id:state.me.id, bus:state.me.bus, day:+el.dataset.day, stop_key:key, stop_title:el.dataset.t, rating:d.rating, comment });
       state.ratings[key] = { rating:d.rating, comment };
       store.set(mineKey("ratings",state.me.id), state.ratings);
-      st.textContent = "Saved at " + fmtTime(new Date().toISOString()) + ". Thank you!";
+      st.textContent = "Saved for " + meLabel() + " at " + fmtTime(new Date().toISOString()) + ". Thank you!";
       const btn = document.querySelector(`.learn[data-k="${key}"]`);
       if(btn) btn.textContent = `Rated ${d.rating} of 5. Edit`;
     }catch(err){
@@ -1162,7 +1173,7 @@ document.addEventListener("click", async e=>{
     try{
       await db.setEval(p);
       state.evSavedAt = new Date().toISOString(); persistEv();
-      st.textContent = "Saved at " + fmtTime(state.evSavedAt) + ". " + (blank ? blank+" question"+(blank>1?"s":"")+" still blank. You can come back to finish." : "All questions answered. Thank you!");
+      st.textContent = "Saved for " + meLabel() + " at " + fmtTime(state.evSavedAt) + ". " + (blank ? blank+" question"+(blank>1?"s":"")+" still blank. You can come back to finish." : "All questions answered. Thank you!");
     }catch(err){
       st.textContent = "Could not save. Your answers are kept on this phone. Try again when you have signal.";
     }
@@ -1189,7 +1200,7 @@ document.addEventListener("click", async e=>{
       await db.setAnswer({ student_id:state.me.id, bus:state.me.bus, day, place:key, answer:text });
       state.mine[key] = text;
       try{ localStorage.removeItem("tour_draft_"+key); }catch(e){}
-      st.textContent = "Saved at " + fmtTime(new Date().toISOString()) + ".";
+      st.textContent = "Saved for " + meLabel() + " at " + fmtTime(new Date().toISOString()) + ".";
       const btn = document.querySelector(`.learn[data-p="${key}"]`);
       if(btn) btn.textContent = "Answered. View or edit";
     }catch(err){
