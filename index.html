@@ -164,6 +164,7 @@ textarea{width:100%;min-height:120px;padding:12px;border:1.5px solid var(--rule)
 .conbar:empty{display:none}
 .conforme p{margin:0 0 12px;white-space:pre-wrap}
 .conforme p:last-child{margin-bottom:0}
+.conforme h3:first-child{margin-top:0}
 .sr{position:absolute;left:-9999px}
 .chk{display:flex;gap:12px;align-items:flex-start;font-weight:600;margin:0}
 .chk input{width:24px;height:24px;margin:2px 0 0;flex:none;accent-color:var(--bus)}
@@ -193,7 +194,7 @@ textarea{width:100%;min-height:120px;padding:12px;border:1.5px solid var(--rule)
 const CONFIG = {
   // Paste your Google Apps Script web app link here (it ends in /exec).
   // Leave blank to run in demo mode (data is saved only on that one phone).
-  sheetsUrl: "https://script.google.com/macros/s/AKfycbzQoH7Zrdm27-y4bFm3KY5z72csXQjtAMlHZXoYDAPqmfz9yMq8C4Fq9Zx1ZG-viBFi/exec",
+  sheetsUrl: "https://script.google.com/macros/s/AKfycbwQo8M24oM94zAAz-nAWU5NQu5pHfO6epad3VcxRekBJuj0V-ikD3dex28yUXfDogVU/exec",
   // Used in demo mode only. With Google Sheets, the real teacher PIN is set inside the script.
   teacherPin: "2026",
   // One link where students upload their quest photos and videos (a Padlet board, Google Drive folder or Google Form).
@@ -211,12 +212,27 @@ const CONFIG = {
 // Change "version" whenever you change the text. Everyone then has to acknowledge the new version again.
 const CONFORME = {
   version: "v1",
-  title: "Student Conforme",
+  title: "Reminders and Conforme",
+  // A line starting with "## " shows as a small heading. Every other line is one paragraph.
   paragraphs: [
-    "PLACEHOLDER: replace this with the conforme statement.",
-    "Each item in this list is one paragraph on the page."
+    "Before we kick off today’s tour, here are a few quick reminders to help everything run smoothly and safely.",
+    "## 1. Stick together",
+    "Never leave your buddy behind or wander off alone. If your buddy or busmate needs help, stay with them and notify an FOC immediately.",
+    "## 2. Mind the schedule",
+    "Enjoy taking photos, but move briskly between spots. Remember that delays at one stop cut into everyone’s time at the next.",
+    "## 3. Protect your privacy",
+    "For everyone’s safety, please avoid real-time social media posting.",
+    "## 4. Watch your belongings",
+    "Keep your money and gadgets secure, and double-check your area before we move to the next venue.",
+    "## 5. Practice CLAYGO",
+    "Clean up after yourself. Don’t leave trash for others to clear.",
+    "## 6. Communication",
+    "Report any issues to your FOCs right away.",
+    "Let’s represent the Ateneo community well today by embodying competence, character, and respect in everything we do. Enjoy the tour!",
+    "## Conforme",
+    "I am an Atenean—a person of competence and character. I understand that school rules and the Ateneo Code of Conduct apply throughout this tour, and I agree to uphold these standards. I accept full responsibility for my words and actions, and I understand that any violation of school rules or the tour’s code of conduct may result in certain consequences."
   ],
-  ackText: "I have read and understood the conforme, and I agree to follow it."
+  ackText: "I have read the reminders and the conforme, and I agree to uphold them."
 };
 
 /* ============ BUSES ============ */
@@ -779,7 +795,7 @@ function viewConforme(){
   if(!state.me) return pickCard("Pick your bus and assigned number once. This phone will remember it. Then you can read and acknowledge the conforme.");
   const c = state.conf;
   return `<h2 class="dayhead">${esc(CONFORME.title)}</h2>
-    <section class="card conforme">${CONFORME.paragraphs.map(p=>`<p>${esc(p)}</p>`).join("")}</section>
+    <section class="card conforme">${CONFORME.paragraphs.map(p=>p.startsWith("## ") ? `<h3 style="margin:16px 0 4px;font:800 18px var(--head)">${esc(p.slice(3))}</h3>` : `<p>${esc(p)}</p>`).join("")}</section>
     ${c.ack
       ? `<section class="card ackok"><h2>Acknowledged</h2><p style="margin:0">Recorded for <b>${meLabel()}</b> on ${esc(confTime(c.ack))}. Thank you.</p></section>`
       : `<section class="card"><label class="chk" for="conf-chk"><input type="checkbox" id="conf-chk" data-change="confchk"><span>${esc(CONFORME.ackText)}</span></label>
