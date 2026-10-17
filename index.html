@@ -87,9 +87,11 @@ select,input{width:100%;padding:12px;border:1.5px solid var(--rule);border-radiu
 .info h3{margin:18px 0 4px;font:700 18px var(--head)}
 .info ul{margin:4px 0;padding-left:20px}
 
-.nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(5,1fr);background:var(--card);
+.nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(6,1fr);background:var(--card);
   border-top:1px solid var(--rule);padding-bottom:env(safe-area-inset-bottom,0px)}
-.nav button{padding:16px 2px;border:0;border-top:4px solid transparent;background:none;font:700 14px var(--body);color:var(--muted)}
+.nav button{padding:16px 1px;border:0;border-top:4px solid transparent;background:none;font:700 12.5px var(--body);color:var(--muted)}
+.nav button.dot{position:relative}
+.nav button.dot::after{content:"";position:absolute;top:8px;right:calc(50% - 30px);width:9px;height:9px;border-radius:50%;background:#C8283A}
 .nav button[aria-current="page"]{color:var(--ink);border-top-color:var(--bus)}
 
 .learn{margin:8px 8px 0 0;padding:8px 14px;border:2px solid var(--bus);border-radius:999px;background:var(--card);font:700 15px var(--body)}
@@ -158,17 +160,30 @@ textarea{width:100%;min-height:120px;padding:12px;border:1.5px solid var(--rule)
 .bar i{display:block;height:100%;background:var(--bus)}
 .buschips{display:flex;flex-wrap:wrap;gap:4px 16px;margin:8px 4px 0;font-size:15px}
 .cmt{margin:8px 4px 0;padding:8px 10px;background:var(--card);border-left:4px solid var(--rule);border-radius:6px}
+.conbar{background:#FDE3E5}
+.conbar:empty{display:none}
+.conforme p{margin:0 0 12px;white-space:pre-wrap}
+.conforme p:last-child{margin-bottom:0}
+.sr{position:absolute;left:-9999px}
+.chk{display:flex;gap:12px;align-items:flex-start;font-weight:600;margin:0}
+.chk input{width:24px;height:24px;margin:2px 0 0;flex:none;accent-color:var(--bus)}
+.primary:disabled{opacity:.45;cursor:not-allowed}
+.ackok{border-color:#17663F;background:#EAF6EF}
+.ackok h2{color:#17663F}
+.sentq{margin:10px 0 0;padding:8px 10px;background:var(--paper);border-left:4px solid var(--rule);border-radius:6px;white-space:pre-wrap}
 @media (prefers-reduced-motion:no-preference){.big,.busbtn,.chip{transition:background-color .15s}}
 </style>
 </head>
 <body>
 <header class="top"><div class="wrap" style="padding:0"><h1>Taiwan Educational Tour</h1><p id="range"></p></div></header>
 <div class="whobar" id="whobar" role="status"></div>
+<div class="whobar conbar" id="confbar" role="status"></div>
 <main class="wrap" id="app"></main>
 <nav class="nav" aria-label="Sections">
   <button data-tab="itinerary">Itinerary</button>
   <button data-tab="quest">Quest</button>
   <button data-tab="eval">Evaluate</button>
+  <button data-tab="conforme" id="navconf">Conforme</button>
   <button data-tab="info">Info</button>
   <button data-tab="teachers">Teachers</button>
 </nav>
@@ -190,6 +205,18 @@ const CONFIG = {
   contacts: [],
   // Marks parts of the itinerary that still need confirming. Set to false before sharing with students.
   showDraftFlags: false
+};
+
+/* ============ CONFORME (edit the wording here) ============ */
+// Change "version" whenever you change the text. Everyone then has to acknowledge the new version again.
+const CONFORME = {
+  version: "v1",
+  title: "Student Conforme",
+  paragraphs: [
+    "PLACEHOLDER: replace this with the conforme statement.",
+    "Each item in this list is one paragraph on the page."
+  ],
+  ackText: "I have read and understood the conforme, and I agree to follow it."
 };
 
 /* ============ BUSES ============ */
@@ -490,6 +517,27 @@ const db = {
     if(remote) return api("allEvaluations");
     return store.get("tour_eval",[]).map(({student_id,...rest})=>rest);
   },
+  // Conforme: a student's acknowledgement and questions. Teachers read everything.
+  async myConforme(sid){
+    if(remote) return api("myConforme", { student_id:sid, version:CONFORME.version });
+    const a = store.get("tour_conf_ack",[]).find(x=>x.student_id===sid && x.version===CONFORME.version);
+    return { acknowledged_at: a ? a.acknowledged_at : "" };
+  },
+  async setConforme(row){
+    if(remote) return api("setConforme", row);
+    const all = store.get("tour_conf_ack",[]);
+    if(!all.some(x=>x.student_id===row.student_id && x.version===row.version))
+      all.push({ ...row, acknowledged_at:new Date().toISOString() });
+    store.set("tour_conf_ack",all);
+  },
+  async askConforme(row){
+    if(remote) return api("askConforme", row);
+    const all = store.get("tour_conf_q",[]); all.push({ ...row, asked_at:new Date().toISOString() }); store.set("tour_conf_q",all);
+  },
+  async allConforme(){
+    if(remote) return api("allConforme");
+    return { acks:store.get("tour_conf_ack",[]), questions:store.get("tour_conf_q",[]) };
+  },
   async myAnswers(sid){
     if(remote) return api("myAnswers",{ student_id:sid });
     return store.get("tour_answers",[]).filter(x=>x.student_id===sid);
@@ -571,7 +619,8 @@ const state = {
   unlocked:false, pin:"", tname:store.get("tour_tname",""),
   tmode:"checkin", tbus:1, tq:null, tquest:null, tbusF:0,
   open:null, mine:{}, stamps:{}, cpRows:[], cpErr:false, cp:null, qrows:[],
-  ratings:{}, rating:null, rdraft:{}, ev:{}, evSavedAt:"", fbmode:"stops", fbOpen:null, fbRows:[], evRows:[]
+  ratings:{}, rating:null, rdraft:{}, ev:{}, evSavedAt:"", fbmode:"stops", fbOpen:null, fbRows:[], evRows:[],
+  conf:{ ack:"", qs:[], draft:"" }, confRows:{ acks:[], questions:[] }
 };
 let poll = null;
 
@@ -725,6 +774,27 @@ function viewQuest(){
     }).join("")}`;
 }
 
+const confTime = iso => new Date(iso).toLocaleString([], { month:"short", day:"numeric", hour:"numeric", minute:"2-digit" });
+function viewConforme(){
+  if(!state.me) return pickCard("Pick your bus and assigned number once. This phone will remember it. Then you can read and acknowledge the conforme.");
+  const c = state.conf;
+  return `<h2 class="dayhead">${esc(CONFORME.title)}</h2>
+    <section class="card conforme">${CONFORME.paragraphs.map(p=>`<p>${esc(p)}</p>`).join("")}</section>
+    ${c.ack
+      ? `<section class="card ackok"><h2>Acknowledged</h2><p style="margin:0">Recorded for <b>${meLabel()}</b> on ${esc(confTime(c.ack))}. Thank you.</p></section>`
+      : `<section class="card"><label class="chk" for="conf-chk"><input type="checkbox" id="conf-chk" data-change="confchk"><span>${esc(CONFORME.ackText)}</span></label>
+          <p class="who" style="margin:12px 0 0">Acknowledging as <b>${meLabel()}</b>. Wrong number? <button class="link" data-act="switchme">Not you?</button></p>
+          <button class="primary" id="conf-btn" data-act="confack" disabled>I acknowledge</button>
+          <p id="conf-status" class="muted" role="status"></p></section>`}
+    <section class="card"><h2>Questions about the conforme?</h2>
+      <p class="muted" style="margin:0">Write your question here. A teacher will read it.</p>
+      <label for="conf-q" class="sr">Your question</label>
+      <textarea id="conf-q" rows="4" maxlength="1000" data-cq="1">${esc(c.draft||"")}</textarea>
+      <button class="primary" data-act="confask">Send question</button>
+      <p id="conf-qstatus" class="muted" role="status"></p>
+      ${c.qs.map(q=>`<div class="sentq"><b>Sent ${esc(confTime(q.at))}</b><br>${esc(q.q)}</div>`).join("")}</section>`;
+}
+
 function viewInfo(){
   const flights = [
     ["PR 2144","Iloilo to Manila","Day 1, 1:25 PM"],
@@ -753,9 +823,9 @@ function viewTeachers(){
       <p id="pinerr" class="err" role="alert"></p><button class="primary" data-act="unlock">Open</button></section>`;
   }
   const m = state.tmode;
-  const bar = `<div class="seg five" role="group" aria-label="Teacher view">${[["checkin","Check in"],["overview","Overview"],["answers","Answers"],["quest","Quest"],["feedback","Feedback"]].map(k=>
+  const bar = `<div class="seg five" role="group" aria-label="Teacher view">${[["checkin","Check in"],["overview","Overview"],["answers","Answers"],["quest","Quest"],["feedback","Feedback"],["conforme","Conforme"]].map(k=>
     `<button data-act="tmode" data-mode="${k[0]}" aria-pressed="${m===k[0]}">${k[1]}</button>`).join("")}</div>`;
-  return bar + (m==="checkin" ? viewCp() : m==="overview" ? viewOverview() : m==="answers" ? viewAnswers() : m==="feedback" ? viewFeedback() : viewQuestAdmin()) +
+  return bar + (m==="checkin" ? viewCp() : m==="overview" ? viewOverview() : m==="answers" ? viewAnswers() : m==="feedback" ? viewFeedback() : m==="conforme" ? viewConformeAdmin() : viewQuestAdmin()) +
     `<button class="link" style="margin:18px 0 6px" data-act="lock">Lock and clear names from this phone</button>`;
 }
 
@@ -874,6 +944,54 @@ async function hydrateFeedback(){
     if(state.fbmode==="stops") state.fbRows = await db.allRatings(); else state.evRows = await db.allEvals();
   }catch(e){ box.innerHTML = `<p class="err">Could not load feedback. Check the connection and tap Refresh.</p>`; return; }
   paintFeedback();
+}
+
+function viewConformeAdmin(){
+  return `<label for="tbf">Show</label>
+    <select id="tbf" data-change="tbusf"><option value="0">All buses</option>${BUSES.map(b=>`<option value="${b.n}" ${state.tbusF===b.n?"selected":""}>Bus ${b.n}</option>`).join("")}</select>
+    <div class="sum"><div id="csum"><span class="muted">Loading...</span></div></div>
+    <h3 class="fbday">Questions</h3><div id="cqlist"></div>
+    <div id="cnot"></div>
+    <button class="primary" data-act="confcsv" data-kind="ack">Download acknowledgements (CSV)</button>
+    <button class="ghost" data-act="confcsv" data-kind="q">Download questions (CSV)</button>
+    <button class="link" style="margin-top:12px" data-act="confrefresh">Refresh</button>
+    <p class="muted" style="font-size:15px">Shows version ${esc(CONFORME.version)}.${remote?"":" Demo mode: records stay on this phone."}</p>`;
+}
+const confWho = id => { const r = ROSTER.find(x=>x.id===id); return r ? tag(r) : id; };
+function paintConforme(){
+  const sum = $("#csum"); if(!sum) return;
+  const bf = state.tbusF, v = CONFORME.version;
+  const acks = state.confRows.acks.filter(a=>a.version===v);
+  const got = new Map(acks.map(a=>[a.student_id,a]));
+  const roster = ROSTER.filter(r=>!bf || r.bus===bf);
+  const done = roster.filter(r=>got.has(r.id)), left = roster.filter(r=>!got.has(r.id));
+  sum.innerHTML = `<b>${done.length}</b> of ${roster.length} acknowledged`;
+  const qs = state.confRows.questions.filter(q=>!bf || q.bus===bf).sort((a,b)=>new Date(b.asked_at)-new Date(a.asked_at));
+  $("#cqlist").innerHTML = qs.length ? qs.map(q=>`<article class="ans"><h3>${esc(confWho(q.student_id))}<small>Bus ${q.bus}, ${esc(confTime(q.asked_at))}</small></h3><p>${esc(q.question)}</p></article>`).join("")
+    : `<p class="muted">No questions yet.</p>`;
+  $("#cnot").innerHTML =
+    `<details class="miss"><summary>Not yet acknowledged (${left.length})</summary><p>${left.map(r=>esc(tag(r))).join(", ") || "Everyone has acknowledged."}</p></details>` +
+    `<details class="miss"><summary>Acknowledged (${done.length})</summary>${done.map(r=>`<p class="cmt">${esc(tag(r))}, Bus ${r.bus}: ${esc(confTime(got.get(r.id).acknowledged_at))}</p>`).join("") || `<p class="muted">None yet.</p>`}</details>`;
+}
+async function hydrateConformeAdmin(){
+  if(state.tab!=="teachers" || !state.unlocked || state.tmode!=="conforme") return;
+  try{ state.confRows = await db.allConforme(); }
+  catch(e){ const b = $("#csum"); if(b) b.innerHTML = `<span class="err">Could not load. Check the connection and tap Refresh.</span>`; return; }
+  paintConforme();
+}
+async function downloadConformeCSV(kind){
+  const d = await db.allConforme(), v = CONFORME.version;
+  if(kind==="q"){
+    const lines = [["student_id","student_name","bus","number","question","asked_at"].map(csvCell).join(",")];
+    d.questions.forEach(q=>{ const r = ROSTER.find(x=>x.id===q.student_id) || {};
+      lines.push([q.student_id, NAMES[q.student_id]||q.name||"", q.bus, r.n||"", q.question, q.asked_at].map(csvCell).join(",")); });
+    return saveCSVFile("conforme-questions", lines);
+  }
+  const got = new Map(d.acks.filter(a=>a.version===v).map(a=>[a.student_id,a]));
+  const lines = [["student_id","student_name","bus","number","status","acknowledged_at","version"].map(csvCell).join(",")];
+  ROSTER.forEach(r=>{ const a = got.get(r.id);
+    lines.push([r.id, NAMES[r.id]||(a&&a.name)||"", r.bus, r.n, a?"Acknowledged":"Not yet", a?a.acknowledged_at:"", v].map(csvCell).join(",")); });
+  saveCSVFile("conforme-acknowledgements", lines);
 }
 
 function viewQuestAdmin(){
@@ -995,6 +1113,34 @@ async function loadNames(){
   }catch(e){}   // no signal: keep using the names already saved on this teacher's phone
 }
 
+const confKey = id => "tour_conf_" + id;
+function loadConformeLocal(){
+  state.conf = { ack:"", qs:[], draft:"" };
+  if(!state.me) return;
+  const c = store.get(confKey(state.me.id), null);
+  if(c && c.version===CONFORME.version) state.conf = { ack:c.ack||"", qs:c.qs||[], draft:"" };
+  else if(c) state.conf.qs = c.qs || [];
+}
+const persistConf = () => { if(state.me) store.set(confKey(state.me.id), { version:CONFORME.version, ack:state.conf.ack, qs:state.conf.qs }); };
+async function loadConforme(){
+  if(!state.me) return;
+  try{
+    const r = await db.myConforme(state.me.id);
+    if(r && r.acknowledged_at && r.acknowledged_at!==state.conf.ack){
+      state.conf.ack = r.acknowledged_at; persistConf();
+      if(state.tab!=="teachers" && !typing()) render();
+    }
+  }catch(e){}
+}
+function updateConfBar(){
+  const el = $("#confbar"), nav = $("#navconf");
+  const need = !!(state.me && !state.conf.ack);
+  if(nav) nav.classList.toggle("dot", need);
+  if(!el) return;
+  el.innerHTML = (need && state.tab!=="teachers" && state.tab!=="conforme")
+    ? `Please read and acknowledge the conforme. <button class="link" data-tab="conforme">Open it</button>` : "";
+}
+
 async function loadStamps(){
   if(!state.me) return;
   try{
@@ -1053,7 +1199,7 @@ async function downloadFeedbackCSV(){
 
 function refreshTeacher(){
   if(state.tab!=="teachers" || !state.unlocked) return;
-  ({ checkin:hydrateCp, overview:hydrateOverview, answers:hydrateAnswers, quest:hydrateQuestAdmin, feedback:hydrateFeedback })[state.tmode]();
+  ({ checkin:hydrateCp, overview:hydrateOverview, answers:hydrateAnswers, quest:hydrateQuestAdmin, feedback:hydrateFeedback, conforme:hydrateConformeAdmin })[state.tmode]();
 }
 
 function csvCell(v){
@@ -1091,9 +1237,9 @@ function render(){
   const b = BUSES[state.bus-1];
   document.documentElement.style.setProperty("--bus", b.color);
   document.documentElement.style.setProperty("--bus-ink", b.ink);
-  const views = { itinerary:viewItinerary, quest:viewQuest, eval:viewEval, info:viewInfo, teachers:viewTeachers };
+  const views = { itinerary:viewItinerary, quest:viewQuest, eval:viewEval, conforme:viewConforme, info:viewInfo, teachers:viewTeachers };
   $("#app").innerHTML = views[state.tab]();
-  updateWho();
+  updateWho(); updateConfBar();
   document.querySelectorAll(".nav button").forEach(n=>n.setAttribute("aria-current", n.dataset.tab===state.tab?"page":"false"));
   if(state.tab==="quest") loadStamps();
   if(state.tab==="teachers" && state.unlocked){
@@ -1113,9 +1259,9 @@ document.addEventListener("click", async e=>{
     const id = $("#who").value, me = ROSTER.find(r=>r.id===id);
     if(!me){ $("#whoerr").textContent = "Choose your number from the list."; return; }
     state.me = me; state.bus = me.bus; state.mine = {}; state.stamps = {};
-    store.set("tour_me",me); store.set("tour_bus",me.bus); loadFeedback(); render(); loadMine();
+    store.set("tour_me",me); store.set("tour_bus",me.bus); loadFeedback(); loadConformeLocal(); render(); loadMine(); loadConforme();
   }
-  else if(a==="switchme"){ state.me=null; state.mine={}; state.stamps={}; store.set("tour_me",null); loadFeedback(); render(); }
+  else if(a==="switchme"){ state.me=null; state.mine={}; state.stamps={}; store.set("tour_me",null); loadFeedback(); loadConformeLocal(); render(); }
   else if(a==="unlock"){
     const v = $("#pin").value, nm = ($("#tname").value||"").trim();
     try{
@@ -1177,6 +1323,39 @@ document.addEventListener("click", async e=>{
     }catch(err){
       st.textContent = "Could not save. Your answers are kept on this phone. Try again when you have signal.";
     }
+  }
+  else if(a==="confack"){
+    if(!state.me) return;
+    const chk = $("#conf-chk"), st = $("#conf-status");
+    if(!chk || !chk.checked){ st.textContent = "Tick the box first."; return; }
+    el.disabled = true; st.textContent = "Saving...";
+    try{
+      await db.setConforme({ student_id:state.me.id, bus:state.me.bus, version:CONFORME.version });
+      state.conf.ack = new Date().toISOString(); persistConf();
+      render(); loadConforme();            // loadConforme replaces this time with the server's time
+    }catch(err){
+      el.disabled = false; st.textContent = "Could not save. Check your connection and try again.";
+    }
+  }
+  else if(a==="confask"){
+    if(!state.me) return;
+    const ta = $("#conf-q"), st = $("#conf-qstatus"), text = ta.value.trim();
+    if(!text){ st.textContent = "Write your question first."; return; }
+    el.disabled = true; st.textContent = "Sending...";
+    try{
+      await db.askConforme({ student_id:state.me.id, bus:state.me.bus, version:CONFORME.version, question:text });
+      state.conf.qs.push({ q:text, at:new Date().toISOString() }); state.conf.draft = ""; persistConf();
+      render();
+      $("#conf-qstatus").textContent = "Sent for " + meLabel() + ". A teacher will read it.";
+    }catch(err){
+      el.disabled = false;
+      st.textContent = (err.message==="limit") ? "You have sent the most questions allowed. Please ask your teacher." : "Could not send. Your question is still here. Try again when you have signal.";
+    }
+  }
+  else if(a==="confrefresh"){ hydrateConformeAdmin(); }
+  else if(a==="confcsv"){
+    try{ await downloadConformeCSV(el.dataset.kind); }
+    catch(err){ alert("Could not create the file. Check the connection and try again."); }
   }
   else if(a==="fbmode"){ state.fbmode = el.dataset.mode; state.fbOpen = null; render(); }
   else if(a==="fbopen"){ state.fbOpen = (state.fbOpen===el.dataset.k) ? null : el.dataset.k; paintFeedback(); }
@@ -1251,6 +1430,7 @@ document.addEventListener("change", e=>{
   if(el.dataset.change==="tq"){ state.tq = el.value; render(); }
   else if(el.dataset.change==="tquest"){ state.tquest = el.value; render(); }
   else if(el.dataset.change==="tbusf"){ state.tbusF = +el.value; render(); }
+  else if(el.dataset.change==="confchk"){ const b = $("#conf-btn"); if(b) b.disabled = !el.checked; }
 });
 document.addEventListener("input", e=>{
   const el = e.target;
@@ -1258,6 +1438,7 @@ document.addEventListener("input", e=>{
     try{ localStorage.setItem("tour_draft_"+el.dataset.draft, el.value); }catch(err){}
   }
   else if(el.matches && el.matches("textarea[data-rc]")){ rdraft(el.dataset.rc).comment = el.value; }
+  else if(el.matches && el.matches("textarea[data-cq]")){ state.conf.draft = el.value; }
   else if(el.matches && el.matches("textarea[data-ev]")){ state.ev[el.dataset.ev] = el.value; persistEv(); }
 });
 
@@ -1266,7 +1447,7 @@ document.addEventListener("input", e=>{
   const z = fmtDate(DAYS[DAYS.length-1].date,{month:"short",day:"numeric",year:"numeric"});
   $("#range").textContent = a + " to " + z;
   if(state.me){ const fresh = ROSTER.find(r=>r.id===state.me.id); state.me = fresh || null; if(fresh) store.set("tour_me",fresh); }
-  loadFeedback(); render(); loadMine(); loadStamps();
+  loadFeedback(); loadConformeLocal(); render(); loadMine(); loadStamps(); loadConforme();
   const tick = () => flushQueue().then(n=>{ updateSync(); if(n) refreshTeacher(); });
   setInterval(tick, 15000);
   if(window.addEventListener) window.addEventListener("online", tick);
